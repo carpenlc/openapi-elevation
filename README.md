@@ -13,6 +13,22 @@ The underlying library integrating OpenAPI to SpringBoot is [springfox](https://
 Start your server as a simple java application
 
 You can view the api documentation in swagger-ui by pointing to  
-http://localhost:8080/
+http://localhost:8081/
 
 Change default port value in application.properties# openapi-elevation
+
+## Generating the Spring Boot server stubs
+
+wget http://central.maven.org/maven2/org/openapitools/openapi-generator-cli/4.1.0/openapi-generator-cli-4.1.0.jar -O openapi-generator-cli.jar
+
+
+java -jar /opt/openapi-generator/openapi-generator-cli.jar \
+  generate \
+  --generator-name spring \
+  -i /home/carpenlc/projects/elevation_services/openapi-spring/elevation_services.yaml \
+  --invoker-package mil.nga.elevation_services \
+  --model-package mil.nga.elevation_services.model \
+  --api-package mil.nga.elevation_services.api \
+  -o /home/carpenlc/projects/elevation_services/generated 
+  
+  

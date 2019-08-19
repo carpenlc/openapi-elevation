@@ -1,7 +1,6 @@
-package mil.nga.elevation.openapi.model;
+package mil.nga.elevation_services.model;
 
 import java.util.Objects;
-import io.swagger.annotations.ApiModel;
 import com.fasterxml.jackson.annotation.JsonValue;
 import org.openapitools.jackson.nullable.JsonNullable;
 import javax.validation.Valid;
@@ -10,17 +9,29 @@ import javax.validation.constraints.*;
 import com.fasterxml.jackson.annotation.JsonCreator;
 
 /**
- * Output Elevation Units:   * FEET - Output elevation in feet.   * METERS - Output elevation in meters (default) 
+ * Gets or Sets TerrainDataFileType
  */
-public enum ElevationHeightType {
+public enum TerrainDataFileType {
   
-  FEET("FEET"),
+  DTED2("DTED2"),
   
-  METERS("METERS");
+  DTED1("DTED1"),
+  
+  DTED0("DTED0"),
+  
+  SRTM2("SRTM2"),
+  
+  SRTM1("SRTM1"),
+  
+  SRTM2F("SRTM2F"),
+  
+  SRTM1F("SRTM1F"),
+  
+  BEST("BEST");
 
   private String value;
 
-  ElevationHeightType(String value) {
+  TerrainDataFileType(String value) {
     this.value = value;
   }
 
@@ -31,8 +42,8 @@ public enum ElevationHeightType {
   }
 
   @JsonCreator
-  public static ElevationHeightType fromValue(String value) {
-    for (ElevationHeightType b : ElevationHeightType.values()) {
+  public static TerrainDataFileType fromValue(String value) {
+    for (TerrainDataFileType b : TerrainDataFileType.values()) {
       if (b.value.equals(value)) {
         return b;
       }

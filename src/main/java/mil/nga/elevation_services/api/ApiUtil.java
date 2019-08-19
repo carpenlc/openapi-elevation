@@ -1,4 +1,4 @@
-package mil.nga.elevation.openapi.api;
+package mil.nga.elevation_services.api;
 
 import org.springframework.web.context.request.NativeWebRequest;
 

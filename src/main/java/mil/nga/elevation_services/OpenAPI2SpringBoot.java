@@ -1,4 +1,4 @@
-package mil.nga.elevation.openapi;
+package mil.nga.elevation_services;
 
 import com.fasterxml.jackson.databind.Module;
 import org.openapitools.jackson.nullable.JsonNullableModule;
@@ -12,8 +12,7 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @SpringBootApplication
-@ComponentScan(
-		basePackages = {"mil.nga.elevation.openapi", "mil.nga.elevation.openapi.api" , "org.openapitools.configuration"})
+@ComponentScan(basePackages = {"mil.nga.elevation_services", "mil.nga.elevation_services.api" , "org.openapitools.configuration"})
 public class OpenAPI2SpringBoot implements CommandLineRunner {
 
     @Override

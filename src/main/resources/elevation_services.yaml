@@ -1,0 +1,205 @@
+openapi: "3.0.0"
+info:
+  version: 1.0.0
+  title: Elevation Services
+  license:
+    name: MIT
+servers:
+  - url: http://localhost/v1
+paths:
+  /ElevationAt:
+    get:
+      tags:
+        - elevation_services
+      summary: Get the elevation data associated with input geographic locations
+      operationId: "getElevationAt"
+      parameters:
+        - in: query
+          name: heightType
+          description: The output units for the elevation height data.
+          required: false
+          schema:
+            type: string
+            default: METERS
+            enum: 
+              - FEET
+              - METERS
+        - in: query
+          name: source
+          description: The source DEM type to use for calculating the elevation height data.
+          required: false
+          schema:
+            type: string
+            default: DTED0
+            enum:
+            - DTED2
+            - DTED1
+            - DTED0
+            - SRTM2
+            - SRTM1
+            - SRTM2F
+            - SRTM1F
+            - BEST
+        - in: query
+          name: pts
+          description: List of geographic points in lon, lat order.
+          required: true
+          schema:
+            type: array
+            items:
+              type: number
+              format: double
+              minimum: -180.0
+              maximum: 180.0
+            minItems: 2
+            maxItems: 20
+        - in: query
+          name: operation
+          description: This parameter is no longer used.
+          required: false
+          schema:
+            type: string
+      responses:
+        200:
+          description: Elevation data requested.
+          content:
+            application/json:    
+              schema:
+                $ref: "#/components/schemas/ElevationResponse"
+            application/xml:      
+              schema:
+                $ref: "#/components/schemas/ElevationResponse"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    post:
+      tags:
+        - elevation_services
+      summary: Get the elevation data associated with input geographic locations
+      operationId: "getElevationAt"
+      requestBody:
+        description: Client specified geographic point.
+        required: true
+        content:
+          application/json:    
+            schema:
+              $ref: "#/components/schemas/ElevationQuery"
+          application/xml:      
+            schema:
+              $ref: "#/components/schemas/ElevationQuery"
+      responses:
+        200:
+          description: Elevation data requested.
+          content:
+            application/json:    
+              schema:
+                $ref: "#/components/schemas/ElevationResponse"
+            application/xml:      
+              schema:
+                $ref: "#/components/schemas/ElevationResponse"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+components:
+  schemas:
+    SecurityType:
+      type: object
+      properties:
+        classification:
+          type: string
+        ownerProducer:
+          type: string
+    CoordinateType:
+      type: object
+      properties:
+        lat:
+          type: number
+          format: double
+          minimum: -90.0
+          maximum: 90.0
+        lon:
+          type: number
+          format: double
+          minimum: -180.0
+          maximum: 180.0
+      required: 
+        - lat
+        - lon
+    HeightUnitType:
+      type: string
+      default: METERS
+      enum: 
+        - FEET
+        - METERS
+      description: >
+        Output Elevation Units:
+          * FEET - Output elevation in feet.
+          * METERS - Output elevation in meters (default)
+    TerrainDataFileType:
+      type: string
+      default: DTED0
+      enum:
+        - DTED2
+        - DTED1
+        - DTED0
+        - SRTM2
+        - SRTM1
+        - SRTM2F
+        - SRTM1F
+        - BEST
+    ElevationType:
+      type: object
+      properties:
+        elevation:
+          type: integer
+        absHorizontalAccuracy:
+          type: integer
+        absVerticalAccuracy:
+          type: integer
+        relHorizontalAccuracy:
+          type: integer
+        relVerticalAccuracy:
+          type: integer
+        source: 
+          $ref: '#/components/schemas/TerrainDataFileType'
+        coordinate:
+          $ref: '#/components/schemas/CoordinateType'
+    ElevationQuery:
+      type: object
+      properties:
+        coordinates:
+          type: array
+          items:
+            $ref: '#/components/schemas/CoordinateType'
+        heightType:
+          $ref: '#/components/schemas/HeightUnitType'
+        source:
+          $ref: '#/components/schemas/TerrainDataFileType'
+    ElevationResponse:
+      type: object
+      properties:
+        security:
+          $ref: '#/components/schemas/SecurityType'
+        heightType:
+          $ref: '#/components/schemas/HeightUnitType'
+        elevations:
+          type: array
+          items:
+            $ref: '#/components/schemas/ElevationType'
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string

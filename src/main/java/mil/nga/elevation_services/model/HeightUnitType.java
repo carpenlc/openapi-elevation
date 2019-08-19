@@ -1,6 +1,7 @@
-package mil.nga.elevation.openapi.model;
+package mil.nga.elevation_services.model;
 
 import java.util.Objects;
+import io.swagger.annotations.ApiModel;
 import com.fasterxml.jackson.annotation.JsonValue;
 import org.openapitools.jackson.nullable.JsonNullable;
 import javax.validation.Valid;
@@ -9,29 +10,17 @@ import javax.validation.constraints.*;
 import com.fasterxml.jackson.annotation.JsonCreator;
 
 /**
- * Gets or Sets SourceDEMType
+ * Output Elevation Units:   * FEET - Output elevation in feet.   * METERS - Output elevation in meters (default) 
  */
-public enum SourceDEMType {
+public enum HeightUnitType {
   
-  DTED2("DTED2"),
+  FEET("FEET"),
   
-  DTED1("DTED1"),
-  
-  DTED0("DTED0"),
-  
-  SRTM2("SRTM2"),
-  
-  SRTM1("SRTM1"),
-  
-  SRTM2F("SRTM2F"),
-  
-  SRTM1F("SRTM1F"),
-  
-  BEST("BEST");
+  METERS("METERS");
 
   private String value;
 
-  SourceDEMType(String value) {
+  HeightUnitType(String value) {
     this.value = value;
   }
 
@@ -42,8 +31,8 @@ public enum SourceDEMType {
   }
 
   @JsonCreator
-  public static SourceDEMType fromValue(String value) {
-    for (SourceDEMType b : SourceDEMType.values()) {
+  public static HeightUnitType fromValue(String value) {
+    for (HeightUnitType b : HeightUnitType.values()) {
       if (b.value.equals(value)) {
         return b;
       }
