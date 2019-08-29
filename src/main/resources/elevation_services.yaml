@@ -2,17 +2,82 @@ openapi: "3.0.0"
 info:
   version: 1.0.0
   title: Elevation Services
+  description: The elevation services API provides an interface for clients to query for elevation-related information.  
+    Clients can query for elevation data associated with a specific geographic point, or query for the minimum and maximum 
+    elevation values within a user-defined geographic area.
   license:
     name: MIT
 servers:
-  - url: http://localhost/v1
+  - url: http://localhost/elevation/v1
 paths:
+  /isAlive:
+    get:
+      summary: End point used by monitoring applications to ensure the application is running.
+      operationId: "isAlive"
+      responses:
+        200:
+          description: Simple text based response.
+          content:
+            text/plain:
+              schema:    
+                type: string
+  /CoverageAvailable:
+    get:
+      summary: End point used to determine what coverage types are available for a given point.
+      operationId: "getCoverageAvailableGET"
+      parameters:
+        - in: query
+          name: lat
+          description: Latitude value of a coordinate pair.  The coordinates can be specified in either DMS format or decimal degrees.
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: lon
+          description: Longitude value of a coordinate pair.  The coordinates can be specified in either DMS format or decimal degrees.
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Simple text based response.
+          content:
+            application/json:
+              schema:    
+                $ref: "#/components/schemas/CoverageAvailableType"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    post:
+      summary: End point used to determine what coverage types are available for a given point.  The post version allows clients to specify more than one pont of interest.
+      operationId: "getCoverageAvailablePOST"
+      requestBody:
+        description: Client specified list of geographic points.  The coordinates can be specified in either DMS format or decimal degrees.
+        required: true
+        content:
+          application/json:    
+            schema:
+              $ref: "#/components/schemas/CoordinateTypeArray"
+      responses:
+        200:
+          description: Simple text based response.
+          content:
+            application/json:
+              schema:    
+                $ref: "#/components/schemas/CoveragesAvailableType"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
   /ElevationAt:
     get:
-      tags:
-        - elevation_services
-      summary: Get the elevation data associated with input geographic locations
-      operationId: "getElevationAt"
+      summary: Determine the elevation height value at a particular geographic location
+      operationId: "getElevationAtGET"
       parameters:
         - in: query
           name: heightType
@@ -42,15 +107,12 @@ paths:
             - BEST
         - in: query
           name: pts
-          description: List of geographic points in lon, lat order.
+          description: List of geographic points in lon, lat order.  The coordinates can be specified in either DMS format or decimal degrees.
           required: true
           schema:
             type: array
             items:
-              type: number
-              format: double
-              minimum: -180.0
-              maximum: 180.0
+              type: string
             minItems: 2
             maxItems: 20
         - in: query
@@ -66,9 +128,6 @@ paths:
             application/json:    
               schema:
                 $ref: "#/components/schemas/ElevationResponse"
-            application/xml:      
-              schema:
-                $ref: "#/components/schemas/ElevationResponse"
         default:
           description: unexpected error
           content:
@@ -76,18 +135,13 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
     post:
-      tags:
-        - elevation_services
-      summary: Get the elevation data associated with input geographic locations
-      operationId: "getElevationAt"
+      summary: Determine the elevation height value at a particular geographic location
+      operationId: "getElevationAtPOST"
       requestBody:
-        description: Client specified geographic point.
+        description: Client specified geographic point.  The coordinates can be specified in either DMS format or decimal degrees.
         required: true
         content:
           application/json:    
-            schema:
-              $ref: "#/components/schemas/ElevationQuery"
-          application/xml:      
             schema:
               $ref: "#/components/schemas/ElevationQuery"
       responses:
@@ -97,15 +151,146 @@ paths:
             application/json:    
               schema:
                 $ref: "#/components/schemas/ElevationResponse"
-            application/xml:      
-              schema:
-                $ref: "#/components/schemas/ElevationResponse"
         default:
           description: unexpected error
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+  /MinMaxElevation:
+    get:
+      summary: Determine the minium and maximum elevation height values within a particular bounding box.
+      operationId: "getMinMaxElevationAtGET"
+      parameters:
+        - in: query
+          name: heightType
+          description: The output units for the elevation height data.
+          required: false
+          schema:
+            type: string
+            default: METERS
+            enum: 
+              - FEET
+              - METERS
+        - in: query
+          name: bbox
+          description: A bounding box containing the southwest and northeast coordinates in lon, lat order.   The coordinates can be specified in either DMS format or decimal degrees.
+          required: true
+          schema:
+            type: array
+            items:
+              type: string
+            minItems: 4
+            maxItems: 4
+        - in: query
+          name: operation
+          description: This parameter is no longer used.
+          required: false
+          schema:
+            type: string
+      responses:
+        200:
+          description: The minimum and maximum elevation values within the user-specified bounding box.
+          content:
+            application/json:    
+              schema:
+                $ref: "#/components/schemas/MinMaxElevationResponse"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    post:
+      summary: Determine the minium and maximum elevation height values within a particular bounding box.
+      operationId: "getElevationAtPOST"
+      requestBody:
+        description: Client specified bounding box.  The coordinates can be specified in either DMS format or decimal degrees.
+        required: true
+        content:
+          application/json:    
+            schema:
+              $ref: "#/components/schemas/MinMaxElevationQuery"
+      responses:
+        200:
+          description: Elevation data requested.
+          content:
+            application/json:    
+              schema:
+                $ref: "#/components/schemas/MinMaxElevationResponse"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"    
+  /MinMaxElevationWKT:
+    get:
+      summary: Determine the minium and maximum elevation height values within an area defined by a well known text (WKT) String.
+      operationId: "getMinMaxElevationAtWKTGET"
+      parameters:
+        - in: query
+          name: heightType
+          description: The output units for the elevation height data.
+          required: false
+          schema:
+            type: string
+            default: METERS
+            enum: 
+              - FEET
+              - METERS
+        - in: query
+          name: wkt
+          description: A well known text String.
+          required: true
+          schema:
+            type: array
+            items:
+              type: string
+            minItems: 4
+            maxItems: 4
+        - in: query
+          name: operation
+          description: This parameter is no longer used.
+          required: false
+          schema:
+            type: string
+      responses:
+        200:
+          description: The minimum and maximum elevation values within the user-specified WKT String.
+          content:
+            application/json:    
+              schema:
+                $ref: "#/components/schemas/MinMaxElevationResponse"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    post:
+      summary: Determine the minium and maximum elevation height values within an area defined by a well known text (WKT) String.
+      operationId: "getElevationAtWKTPOST"
+      requestBody:
+        description: A well known text
+        required: true
+        content:
+          application/json:    
+            schema:
+              $ref: "#/components/schemas/MinMaxElevationQueryWKT"
+      responses:
+        200:
+          description: The minimum and maximum elevation values.
+          content:
+            application/json:    
+              schema:
+                $ref: "#/components/schemas/MinMaxElevationResponse"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"    
 components:
   schemas:
     SecurityType:
@@ -115,19 +300,48 @@ components:
           type: string
         ownerProducer:
           type: string
+    BoundingBoxType:
+      type: object
+      properties:
+        lllat:
+          type: string
+        lllon:
+          type: string
+        urlat:
+          type: string
+        urlon:
+          type: string
+      required: 
+        - lllat
+        - lllon
+        - urlat
+        - urlon
     CoordinateType:
+      type: object
+      properties:
+        lat:
+          type: string
+        lon:
+          type: string
+      required: 
+        - lat
+        - lon
+    CoordinateTypeArray:
+      type: object
+      properties:
+        coordinates:
+          type: array
+          items:
+            $ref: '#/components/schemas/CoordinateType'
+    CoordinateTypeDouble:
       type: object
       properties:
         lat:
           type: number
           format: double
-          minimum: -90.0
-          maximum: 90.0
         lon:
           type: number
           format: double
-          minimum: -180.0
-          maximum: 180.0
       required: 
         - lat
         - lon
@@ -153,6 +367,39 @@ components:
         - SRTM2F
         - SRTM1F
         - BEST
+    CoverageAvailableType:
+      type: object
+      properties:
+        coordinate: 
+          $ref: '#/components/schemas/CoordinateType'
+        coverages:
+          type: array
+          items: 
+            type: string
+    CoveragesAvailableType:
+      type: object
+      properties:
+        coveragesAvailable:
+          type: array
+          items:
+            $ref: '#/components/schemas/CoverageAvailableType'
+    MinMaxElevationType:
+      type: object
+      properties:
+        elevation:
+          type: integer
+        absHorizontalAccuracy:
+          type: integer
+        absVerticalAccuracy:
+          type: integer
+        relHorizontalAccuracy:
+          type: integer
+        relVerticalAccuracy:
+          type: integer
+        source: 
+          $ref: '#/components/schemas/TerrainDataFileType'
+        coordinate:
+          $ref: '#/components/schemas/CoordinateTypeDouble'
     ElevationType:
       type: object
       properties:
@@ -181,6 +428,20 @@ components:
           $ref: '#/components/schemas/HeightUnitType'
         source:
           $ref: '#/components/schemas/TerrainDataFileType'
+    MinMaxElevationQuery:
+      type: object
+      properties:
+        bbox:
+          $ref: '#/components/schemas/BoundingBoxType'
+        heightType:
+          $ref: '#/components/schemas/HeightUnitType'
+    MinMaxElevationQueryWKT:
+      type: object
+      properties:
+        wkt:
+          type: string
+        heightType:
+          $ref: '#/components/schemas/HeightUnitType'
     ElevationResponse:
       type: object
       properties:
@@ -192,6 +453,17 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ElevationType'
+    MinMaxElevationResponse:
+      type: object
+      properties:
+        security:
+          $ref: '#/components/schemas/SecurityType'
+        heightType:
+          $ref: '#/components/schemas/HeightUnitType'
+        minElevation:
+          $ref: '#/components/schemas/MinMaxElevationType'
+        maxElevation:
+          $ref: '#/components/schemas/MinMaxElevationType'
     Error:
       type: object
       required:
