@@ -4,8 +4,12 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.Table;
+
+import mil.nga.elevation_services.model.TerrainDataFileType;
 
 /**
  * This entity represents a row in the <code>TERRAIN_DATA_FILES</code> table
@@ -38,7 +42,7 @@ public class TerrainDataFile implements Serializable {
 	 * @see mil.nga.elevation.TerrainDataType
 	 */
 	@Column(name="TYP")
-	String type;
+	String source;
 	
 	/**
 	 * Latitude value of lower-left coordinate of DEM frame.
@@ -86,8 +90,8 @@ public class TerrainDataFile implements Serializable {
 	 * @see mil.nga.elevation.TerrainDataType
 	 * @return The source type.
 	 */
-	public String getType() {
-		return type;
+	public String getSource() {
+		return source;
 	}
 	
 	/**
@@ -148,8 +152,8 @@ public class TerrainDataFile implements Serializable {
 	 * @see mil.nga.elevation.TerrainDataType
 	 * @param value The source type.
 	 */
-	public void setType(String value) {
-		type = value;
+	public void setSource(String value) {
+		source = value;
 	}
 	
 	/**
@@ -210,8 +214,8 @@ public class TerrainDataFile implements Serializable {
 	 */
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("TerrainDataFile : type => [ ");
-		sb.append(getType());
+		sb.append("TerrainDataFile : source => [ ");
+		sb.append(getSource());
 		sb.append(" ], lat => [ ");
 		sb.append(getLat());
 		sb.append(" ], lon => [ ");

@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import mil.nga.elevation.Constants;
 import mil.nga.elevation_services.model.HeightUnitType;
+import mil.nga.elevation_services.model.TerrainDataFileType;
 
 public class ElevationDataPoint implements Serializable, Constants {
 
@@ -12,11 +13,12 @@ public class ElevationDataPoint implements Serializable, Constants {
 	 */
 	private static final long serialVersionUID = -2774969956804341499L;
 	
-	private final int                elevation;
-	private final String             classificationMarking;
-	private final GeodeticCoordinate coordinate;
-	private final DEMFrameAccuracy   accuracy;
-    private final HeightUnitType     units;
+	private final int                 elevation;
+	private final String              classificationMarking;
+	private final GeodeticCoordinate  coordinate;
+	private final DEMFrameAccuracy    accuracy;
+    private final HeightUnitType      units;
+    private final TerrainDataFileType source;
 
 	/**
 	 * Default constructor enforcing the builder creation pattern.
@@ -29,6 +31,16 @@ public class ElevationDataPoint implements Serializable, Constants {
 		coordinate            = builder.coordinate;
 		accuracy              = builder.accuracy;
 		units                 = builder.units;
+		source                = builder.source;
+	}
+	
+	/**
+	 * Getter method for the object containing the accuracy data 
+	 * the source DEM.
+	 * @return The classification marking.
+	 */
+	public DEMFrameAccuracy getAccuracy() {
+		return accuracy;
 	}
 	
 	/**
@@ -50,6 +62,14 @@ public class ElevationDataPoint implements Serializable, Constants {
 	}
 	
 	/**
+	 * Getter method for the Geodetic coordinate.
+	 * @return The Geodetic coordinate object.
+	 */
+	public GeodeticCoordinate getGeodeticCoordinate() {
+		return this.coordinate;
+	}
+	
+	/**
 	 * Getter method for the latitude value.
 	 * @return The latitude value.
 	 */
@@ -63,6 +83,14 @@ public class ElevationDataPoint implements Serializable, Constants {
 	 */
 	public double getLon() {
 		return coordinate.getLon();
+	}
+	
+	/** 
+	 * Getter method for the source data type.
+	 * @return The source data type.
+	 */
+	public TerrainDataFileType getSource() {
+		return source;
 	}
 	
 	/**
@@ -84,8 +112,10 @@ public class ElevationDataPoint implements Serializable, Constants {
 		sb.append(" ], Lon => [ ");
 		sb.append(getLon());
 		sb.append(" ], elevation => [ ");
-		sb.append(getElevation());
-		sb.append(" ] ");
+		sb.append(getElevation()); 
+		sb.append(" ], source => [ ");
+		sb.append(getSource());
+		sb.append(" ], elevation units => [ ");
 		sb.append(getUnits().name());
 		sb.append(" ], classification marking => [ ");
 		sb.append(getClassificationMarking());
@@ -102,11 +132,12 @@ public class ElevationDataPoint implements Serializable, Constants {
      */
 	public static class ElevationDataPointBuilder {
 		
-		private int                elevation;
-		private String             classificationMarking = "";
-		private GeodeticCoordinate coordinate;
-		private DEMFrameAccuracy   accuracy;
-		private HeightUnitType     units = HeightUnitType.METERS;
+		private int                 elevation;
+		private String              classificationMarking = "";
+		private GeodeticCoordinate  coordinate;
+		private DEMFrameAccuracy    accuracy;
+		private HeightUnitType      units  = HeightUnitType.METERS;
+		private TerrainDataFileType source = TerrainDataFileType.BEST;
 		
 		/**
 		 * Setter method for the source classification marking.
@@ -127,6 +158,20 @@ public class ElevationDataPoint implements Serializable, Constants {
 				HeightUnitType value) {
 			if (value != null) {
 				units = value;
+			}
+			return this;
+		}
+		
+		/**
+		 * Setter method for the units associated with any length 
+		 * data.
+		 * @param value The unit information.
+		 * @return The builder object.
+		 */
+		public ElevationDataPointBuilder source(
+				TerrainDataFileType value) {
+			if (value != null) {
+				source = value;
 			}
 			return this;
 		}

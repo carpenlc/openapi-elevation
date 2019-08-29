@@ -33,7 +33,13 @@ public interface Constants {
 	/**
 	 * If classification is not set, mark it limited distribution.
 	 */
-	public static final String DEFAULT_CLASSIFICATION_MARKING = "LIMDIS";
+	public static final String DEFAULT_CLASSIFICATION_MARKING = "U";
+	
+	/**
+	 * We don't currently have a mechanism to get the producer for a given DEM
+	 * model.  As such it will always be defaulted to the value here.
+	 */
+	public static final String DEFAULT_PRODUCER = "USA";
 	
 	/**
 	 * Default method used to convert meters to feet.

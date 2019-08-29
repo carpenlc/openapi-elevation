@@ -2,15 +2,30 @@ package mil.nga.elevation.dao;
 
 import java.util.List;
 
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
-import mil.nga.elevation_services.model.TerrainDataFileType;
-
-public interface TerrainDataFileDAO extends CrudRepository<TerrainDataFile, Long>{
+/**
+ * The Spring Data JPA interface class defining the database repository 
+ * containing data associated with the available terrain data files.  
+ * The database configuration parameters are stored in the Spring Boot 
+ * <code>application.properties<code> file.
+ * 
+ * @author L. Craig Carpenter
+ */
+@Repository
+public interface TerrainDataFileDAO 
+		extends JpaRepository<TerrainDataFile, Long> {
 
 	/**
 	 * Method used to retrieve a list of terrain data files based on the 
-	 * caller supplied latitude and longitude values.  
+	 * caller supplied latitude and longitude and source type.  We found
+	 * during testing that the database column containing the source DEM
+	 * type contains trailing spaces.  That means we cannot query as an
+	 * enumeration type and we have to include wildcards in the JPQL query
+	 * definition.
 	 * 
 	 * @param lat The latitude value.
 	 * @param lon The longitude value.
@@ -19,8 +34,25 @@ public interface TerrainDataFileDAO extends CrudRepository<TerrainDataFile, Long
 	 * @return A <code>List</code> of terrain data files matching the input 
 	 * latitude/longitude coordinate pair.
 	 */
-    public List<TerrainDataFile> getTerrainDataFiles(
-    		double lat, 
-    		double lon, 
-    		TerrainDataFileType source);
+	@Query("SELECT T FROM TerrainDataFile T WHERE T.lat = :latitude AND T.lon = :longitude AND T.source LIKE '%' || UPPER(:source) || '%'")
+    public List<TerrainDataFile> findByLatAndLonAndSource (
+    		@Param("latitude")  String lat, 
+    		@Param("longitude") String lon, 
+    		@Param("source")    String source);
+    
+	/**
+	 * Method used to retrieve a list of terrain data files based on the 
+	 * caller supplied latitude and longitude.  This method assumes that the 
+	 * caller asked for the best available source DEM.  Results are sorted 
+	 * by the <code>BEST</code> column. 
+	 * 
+	 * @param lat The latitude value.
+	 * @param lon The longitude value.
+	 * @return A <code>List</code> of terrain data files matching the input 
+	 * latitude/longitude coordinate pair.
+	 */
+	@Query("SELECT T FROM TerrainDataFile T WHERE T.lat = :latitude AND T.lon = :longitude order by T.best")
+    public List<TerrainDataFile> findByLatAndLon (
+    		@Param("latitude")  String lat, 
+    		@Param("longitude") String lon);
 }

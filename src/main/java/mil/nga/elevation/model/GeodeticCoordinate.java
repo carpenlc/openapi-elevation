@@ -21,14 +21,18 @@ public class GeodeticCoordinate implements Serializable {
 	
 	private final double lat;
 	private final double lon;
+	private final String latStr;
+	private final String lonStr;
 	
 	/**
 	 * Default constructor enforcing the builder creation pattern.
 	 * @param builder Object containing default values for lat/lon.
 	 */
 	protected GeodeticCoordinate(GeodeticCoordinateBuilder builder) {
-		lat = builder.lat;
-		lon = builder.lon;
+		lat    = builder.lat;
+		lon    = builder.lon;
+		latStr = builder.latStr;
+		lonStr = builder.lonStr;
 	}
 	
 	/**
@@ -38,13 +42,28 @@ public class GeodeticCoordinate implements Serializable {
 	public double getLat() {
 		return lat;
 	}
-	
+
+	/**
+	 * Getter method for the String representation of the latitude value.
+	 * @return The latitude value of the geodetic coordinate.
+	 */
+	public String getLatStr() {
+		return latStr;
+	}
 	/**
 	 * Getter method for the longitude value.
 	 * @return The longitude value of the geodetic coordinate.
 	 */
 	public double getLon() {
 		return lon;
+	}
+	
+	/**
+	 * Getter method for the String representation of the longitude value.
+	 * @return The longitude value of the geodetic coordinate.
+	 */
+	public String getLonStr() {
+		return lonStr;
 	}
 	
 	/**
@@ -57,6 +76,16 @@ public class GeodeticCoordinate implements Serializable {
 		sb.append(" ], Longitude => [ ");
 		sb.append(lon);
 		sb.append(" ]");
+		if ((latStr != null) && (!latStr.isEmpty())) { 
+			sb.append(", Latitude (String) => [ ");
+			sb.append(latStr);
+			sb.append(" ]");
+		}
+		if ((lonStr != null) && (!lonStr.isEmpty())) { 
+			sb.append(", Longitude (String) => [ ");
+			sb.append(lonStr);
+			sb.append(" ]");
+		}
 		return sb.toString();
 	}
 	
@@ -70,6 +99,8 @@ public class GeodeticCoordinate implements Serializable {
 		
 		private double lat;
 		private double lon;
+		private String latStr = null;
+		private String lonStr = null;
 		
 		/**
 		 * Setter method for the latitude value.
@@ -91,6 +122,7 @@ public class GeodeticCoordinate implements Serializable {
 		public GeodeticCoordinateBuilder lat(String lat) 
 				throws IllegalStateException {
 			if ((lat != null) && (!lat.isEmpty())) { 
+				this.latStr = lat.trim();
 				this.lat = CoordsParse.getInstance().parseCoordString(lat, true);
 			}
 			else {
@@ -111,7 +143,9 @@ public class GeodeticCoordinate implements Serializable {
 		}
 		
 		/**
-		 * Setter method for the longitude value.
+		 * Setter method for the longitude value.  If the user specifies the 
+		 * coordinate in a String-based format save the string version as well.
+		 * 
 		 * @param lat String representing the longitude value.
 		 * @return The builder object.
 		 * @throws IllegalStateException Thrown if the input longitude 
@@ -119,7 +153,8 @@ public class GeodeticCoordinate implements Serializable {
 		 */
 		public GeodeticCoordinateBuilder lon(String lon) 
 				throws IllegalStateException {
-			if ((lon != null) && (!lon.isEmpty())) { 
+			if ((lon != null) && (!lon.isEmpty())) {
+				this.lonStr = lon.trim();
 				this.lon = CoordsParse.getInstance().parseCoordString(lon, false);
 			}
 			else {

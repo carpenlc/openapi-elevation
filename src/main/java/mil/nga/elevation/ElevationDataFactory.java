@@ -64,6 +64,8 @@ public class ElevationDataFactory implements Constants {
 	 * the elevation information and associated accuracy data.
 	 * @throws InvalidParameterException Thrown if the input coordinate 
 	 * is null.
+	 * @throws IllegalStateException Thrown if errors are encountered 
+	 * validating internal object fields.
 	 */
 	public ElevationDataPoint getElevationAt(GeodeticCoordinate coordinate) 
 			throws InvalidParameterException, IllegalStateException {
@@ -87,8 +89,20 @@ public class ElevationDataFactory implements Constants {
 							+ (System.currentTimeMillis() - startTime)
 							+ " ] ms.");
 				}
+				
+				System.out.println(coordinate.toString());
+				System.out.println("Elevation (SW Post): " + 
+						frame.elevationAt(
+								(float)coordinate.getLat(), 
+								(float)coordinate.getLon()));
+				System.out.println("Elevation (Interpolated): " + 
+						frame.interpElevationAt(
+								(float)coordinate.getLat(), 
+								(float)coordinate.getLon()));
+				System.out.println("Rel Horz Acc : " + frame.acc.rel_horz_acc);
 				result = new ElevationDataPoint.ElevationDataPointBuilder()
 						.units(getUnits())
+						.source(getSourceType())
 						.classificationMarking(classificationMarking)
 						.withGeodeticCoordinate(coordinate)
 						.withDEMFrameAccuracy(
