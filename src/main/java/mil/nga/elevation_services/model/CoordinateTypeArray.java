@@ -5,62 +5,50 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import java.util.ArrayList;
+import java.util.List;
+import mil.nga.elevation_services.model.CoordinateType;
 import org.openapitools.jackson.nullable.JsonNullable;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 
 /**
- * Error
+ * CoordinateTypeArray
  */
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2019-08-29T11:50:00.502Z[Etc/GMT-0]")
 
-public class Error   {
-  @JsonProperty("code")
-  private Integer code;
+public class CoordinateTypeArray   {
+  @JsonProperty("coordinates")
+  @Valid
+  private List<CoordinateType> coordinates = null;
 
-  @JsonProperty("message")
-  private String message;
+  public CoordinateTypeArray coordinates(List<CoordinateType> coordinates) {
+    this.coordinates = coordinates;
+    return this;
+  }
 
-  public Error code(Integer code) {
-    this.code = code;
+  public CoordinateTypeArray addCoordinatesItem(CoordinateType coordinatesItem) {
+    if (this.coordinates == null) {
+      this.coordinates = new ArrayList<>();
+    }
+    this.coordinates.add(coordinatesItem);
     return this;
   }
 
   /**
-   * Get code
-   * @return code
+   * Get coordinates
+   * @return coordinates
   */
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+  @ApiModelProperty(value = "")
 
+  @Valid
 
-  public Integer getCode() {
-    return code;
+  public List<CoordinateType> getCoordinates() {
+    return coordinates;
   }
 
-  public void setCode(Integer code) {
-    this.code = code;
-  }
-
-  public Error message(String message) {
-    this.message = message;
-    return this;
-  }
-
-  /**
-   * Get message
-   * @return message
-  */
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
-
-
-  public String getMessage() {
-    return message;
-  }
-
-  public void setMessage(String message) {
-    this.message = message;
+  public void setCoordinates(List<CoordinateType> coordinates) {
+    this.coordinates = coordinates;
   }
 
 
@@ -72,23 +60,21 @@ public class Error   {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    Error error = (Error) o;
-    return Objects.equals(this.code, error.code) &&
-        Objects.equals(this.message, error.message);
+    CoordinateTypeArray coordinateTypeArray = (CoordinateTypeArray) o;
+    return Objects.equals(this.coordinates, coordinateTypeArray.coordinates);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(code, message);
+    return Objects.hash(coordinates);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class Error {\n");
+    sb.append("class CoordinateTypeArray {\n");
     
-    sb.append("    code: ").append(toIndentedString(code)).append("\n");
-    sb.append("    message: ").append(toIndentedString(message)).append("\n");
+    sb.append("    coordinates: ").append(toIndentedString(coordinates)).append("\n");
     sb.append("}");
     return sb.toString();
   }

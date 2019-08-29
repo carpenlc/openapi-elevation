@@ -12,58 +12,54 @@ import javax.validation.constraints.*;
 /**
  * CoordinateType
  */
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2019-08-19T14:21:12.307-05:00[America/Chicago]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2019-08-29T11:50:00.502Z[Etc/GMT-0]")
 
 public class CoordinateType   {
   @JsonProperty("lat")
-  private Double lat;
+  private String lat;
 
   @JsonProperty("lon")
-  private Double lon;
+  private String lon;
 
-  public CoordinateType lat(Double lat) {
+  public CoordinateType lat(String lat) {
     this.lat = lat;
     return this;
   }
 
   /**
    * Get lat
-   * minimum: -90.0
-   * maximum: 90.0
    * @return lat
   */
   @ApiModelProperty(required = true, value = "")
   @NotNull
 
-@DecimalMin("-90.0") @DecimalMax("90.0") 
-  public Double getLat() {
+
+  public String getLat() {
     return lat;
   }
 
-  public void setLat(Double lat) {
+  public void setLat(String lat) {
     this.lat = lat;
   }
 
-  public CoordinateType lon(Double lon) {
+  public CoordinateType lon(String lon) {
     this.lon = lon;
     return this;
   }
 
   /**
    * Get lon
-   * minimum: -180.0
-   * maximum: 180.0
    * @return lon
   */
   @ApiModelProperty(required = true, value = "")
   @NotNull
 
-@DecimalMin("-180.0") @DecimalMax("180.0") 
-  public Double getLon() {
+
+  public String getLon() {
     return lon;
   }
 
-  public void setLon(Double lon) {
+  public void setLon(String lon) {
     this.lon = lon;
   }
 

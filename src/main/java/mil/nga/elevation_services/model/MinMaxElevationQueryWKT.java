@@ -5,60 +5,62 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import mil.nga.elevation_services.model.HeightUnitType;
 import org.openapitools.jackson.nullable.JsonNullable;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 
 /**
- * SecurityType
+ * MinMaxElevationQueryWKT
  */
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2019-08-29T11:50:00.502Z[Etc/GMT-0]")
 
-public class SecurityType   {
-  @JsonProperty("classification")
-  private String classification;
+public class MinMaxElevationQueryWKT   {
+  @JsonProperty("wkt")
+  private String wkt;
 
-  @JsonProperty("ownerProducer")
-  private String ownerProducer;
+  @JsonProperty("heightType")
+  private HeightUnitType heightType = HeightUnitType.METERS;
 
-  public SecurityType classification(String classification) {
-    this.classification = classification;
+  public MinMaxElevationQueryWKT wkt(String wkt) {
+    this.wkt = wkt;
     return this;
   }
 
   /**
-   * Get classification
-   * @return classification
+   * Get wkt
+   * @return wkt
   */
   @ApiModelProperty(value = "")
 
 
-  public String getClassification() {
-    return classification;
+  public String getWkt() {
+    return wkt;
   }
 
-  public void setClassification(String classification) {
-    this.classification = classification;
+  public void setWkt(String wkt) {
+    this.wkt = wkt;
   }
 
-  public SecurityType ownerProducer(String ownerProducer) {
-    this.ownerProducer = ownerProducer;
+  public MinMaxElevationQueryWKT heightType(HeightUnitType heightType) {
+    this.heightType = heightType;
     return this;
   }
 
   /**
-   * Get ownerProducer
-   * @return ownerProducer
+   * Get heightType
+   * @return heightType
   */
   @ApiModelProperty(value = "")
 
+  @Valid
 
-  public String getOwnerProducer() {
-    return ownerProducer;
+  public HeightUnitType getHeightType() {
+    return heightType;
   }
 
-  public void setOwnerProducer(String ownerProducer) {
-    this.ownerProducer = ownerProducer;
+  public void setHeightType(HeightUnitType heightType) {
+    this.heightType = heightType;
   }
 
 
@@ -70,23 +72,23 @@ public class SecurityType   {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    SecurityType securityType = (SecurityType) o;
-    return Objects.equals(this.classification, securityType.classification) &&
-        Objects.equals(this.ownerProducer, securityType.ownerProducer);
+    MinMaxElevationQueryWKT minMaxElevationQueryWKT = (MinMaxElevationQueryWKT) o;
+    return Objects.equals(this.wkt, minMaxElevationQueryWKT.wkt) &&
+        Objects.equals(this.heightType, minMaxElevationQueryWKT.heightType);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(classification, ownerProducer);
+    return Objects.hash(wkt, heightType);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class SecurityType {\n");
+    sb.append("class MinMaxElevationQueryWKT {\n");
     
-    sb.append("    classification: ").append(toIndentedString(classification)).append("\n");
-    sb.append("    ownerProducer: ").append(toIndentedString(ownerProducer)).append("\n");
+    sb.append("    wkt: ").append(toIndentedString(wkt)).append("\n");
+    sb.append("    heightType: ").append(toIndentedString(heightType)).append("\n");
     sb.append("}");
     return sb.toString();
   }

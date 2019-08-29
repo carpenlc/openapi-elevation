@@ -5,18 +5,18 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import mil.nga.elevation_services.model.CoordinateType;
+import mil.nga.elevation_services.model.CoordinateTypeDouble;
 import mil.nga.elevation_services.model.TerrainDataFileType;
 import org.openapitools.jackson.nullable.JsonNullable;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 
 /**
- * ElevationType
+ * MinMaxElevationType
  */
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2019-08-29T11:50:00.502Z[Etc/GMT-0]")
 
-public class ElevationType   {
+public class MinMaxElevationType   {
   @JsonProperty("elevation")
   private Integer elevation;
 
@@ -36,9 +36,9 @@ public class ElevationType   {
   private TerrainDataFileType source = TerrainDataFileType.DTED0;
 
   @JsonProperty("coordinate")
-  private CoordinateType coordinate;
+  private CoordinateTypeDouble coordinate;
 
-  public ElevationType elevation(Integer elevation) {
+  public MinMaxElevationType elevation(Integer elevation) {
     this.elevation = elevation;
     return this;
   }
@@ -58,7 +58,7 @@ public class ElevationType   {
     this.elevation = elevation;
   }
 
-  public ElevationType absHorizontalAccuracy(Integer absHorizontalAccuracy) {
+  public MinMaxElevationType absHorizontalAccuracy(Integer absHorizontalAccuracy) {
     this.absHorizontalAccuracy = absHorizontalAccuracy;
     return this;
   }
@@ -78,7 +78,7 @@ public class ElevationType   {
     this.absHorizontalAccuracy = absHorizontalAccuracy;
   }
 
-  public ElevationType absVerticalAccuracy(Integer absVerticalAccuracy) {
+  public MinMaxElevationType absVerticalAccuracy(Integer absVerticalAccuracy) {
     this.absVerticalAccuracy = absVerticalAccuracy;
     return this;
   }
@@ -98,7 +98,7 @@ public class ElevationType   {
     this.absVerticalAccuracy = absVerticalAccuracy;
   }
 
-  public ElevationType relHorizontalAccuracy(Integer relHorizontalAccuracy) {
+  public MinMaxElevationType relHorizontalAccuracy(Integer relHorizontalAccuracy) {
     this.relHorizontalAccuracy = relHorizontalAccuracy;
     return this;
   }
@@ -118,7 +118,7 @@ public class ElevationType   {
     this.relHorizontalAccuracy = relHorizontalAccuracy;
   }
 
-  public ElevationType relVerticalAccuracy(Integer relVerticalAccuracy) {
+  public MinMaxElevationType relVerticalAccuracy(Integer relVerticalAccuracy) {
     this.relVerticalAccuracy = relVerticalAccuracy;
     return this;
   }
@@ -138,7 +138,7 @@ public class ElevationType   {
     this.relVerticalAccuracy = relVerticalAccuracy;
   }
 
-  public ElevationType source(TerrainDataFileType source) {
+  public MinMaxElevationType source(TerrainDataFileType source) {
     this.source = source;
     return this;
   }
@@ -159,7 +159,7 @@ public class ElevationType   {
     this.source = source;
   }
 
-  public ElevationType coordinate(CoordinateType coordinate) {
+  public MinMaxElevationType coordinate(CoordinateTypeDouble coordinate) {
     this.coordinate = coordinate;
     return this;
   }
@@ -172,11 +172,11 @@ public class ElevationType   {
 
   @Valid
 
-  public CoordinateType getCoordinate() {
+  public CoordinateTypeDouble getCoordinate() {
     return coordinate;
   }
 
-  public void setCoordinate(CoordinateType coordinate) {
+  public void setCoordinate(CoordinateTypeDouble coordinate) {
     this.coordinate = coordinate;
   }
 
@@ -189,14 +189,14 @@ public class ElevationType   {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    ElevationType elevationType = (ElevationType) o;
-    return Objects.equals(this.elevation, elevationType.elevation) &&
-        Objects.equals(this.absHorizontalAccuracy, elevationType.absHorizontalAccuracy) &&
-        Objects.equals(this.absVerticalAccuracy, elevationType.absVerticalAccuracy) &&
-        Objects.equals(this.relHorizontalAccuracy, elevationType.relHorizontalAccuracy) &&
-        Objects.equals(this.relVerticalAccuracy, elevationType.relVerticalAccuracy) &&
-        Objects.equals(this.source, elevationType.source) &&
-        Objects.equals(this.coordinate, elevationType.coordinate);
+    MinMaxElevationType minMaxElevationType = (MinMaxElevationType) o;
+    return Objects.equals(this.elevation, minMaxElevationType.elevation) &&
+        Objects.equals(this.absHorizontalAccuracy, minMaxElevationType.absHorizontalAccuracy) &&
+        Objects.equals(this.absVerticalAccuracy, minMaxElevationType.absVerticalAccuracy) &&
+        Objects.equals(this.relHorizontalAccuracy, minMaxElevationType.relHorizontalAccuracy) &&
+        Objects.equals(this.relVerticalAccuracy, minMaxElevationType.relVerticalAccuracy) &&
+        Objects.equals(this.source, minMaxElevationType.source) &&
+        Objects.equals(this.coordinate, minMaxElevationType.coordinate);
   }
 
   @Override
@@ -207,7 +207,7 @@ public class ElevationType   {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class ElevationType {\n");
+    sb.append("class MinMaxElevationType {\n");
     
     sb.append("    elevation: ").append(toIndentedString(elevation)).append("\n");
     sb.append("    absHorizontalAccuracy: ").append(toIndentedString(absHorizontalAccuracy)).append("\n");

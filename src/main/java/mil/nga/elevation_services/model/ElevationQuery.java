@@ -17,7 +17,7 @@ import javax.validation.constraints.*;
 /**
  * ElevationQuery
  */
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2019-08-19T14:21:12.307-05:00[America/Chicago]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2019-08-29T11:50:00.502Z[Etc/GMT-0]")
 
 public class ElevationQuery   {
   @JsonProperty("coordinates")

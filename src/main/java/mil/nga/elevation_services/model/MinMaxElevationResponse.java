@@ -5,32 +5,32 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import java.util.ArrayList;
-import java.util.List;
-import mil.nga.elevation_services.model.ElevationType;
 import mil.nga.elevation_services.model.HeightUnitType;
+import mil.nga.elevation_services.model.MinMaxElevationType;
 import mil.nga.elevation_services.model.SecurityType;
 import org.openapitools.jackson.nullable.JsonNullable;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 
 /**
- * ElevationResponse
+ * MinMaxElevationResponse
  */
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2019-08-29T11:50:00.502Z[Etc/GMT-0]")
 
-public class ElevationResponse   {
+public class MinMaxElevationResponse   {
   @JsonProperty("security")
   private SecurityType security;
 
   @JsonProperty("heightType")
   private HeightUnitType heightType = HeightUnitType.METERS;
 
-  @JsonProperty("elevations")
-  @Valid
-  private List<ElevationType> elevations = null;
+  @JsonProperty("minElevation")
+  private MinMaxElevationType minElevation;
 
-  public ElevationResponse security(SecurityType security) {
+  @JsonProperty("maxElevation")
+  private MinMaxElevationType maxElevation;
+
+  public MinMaxElevationResponse security(SecurityType security) {
     this.security = security;
     return this;
   }
@@ -51,7 +51,7 @@ public class ElevationResponse   {
     this.security = security;
   }
 
-  public ElevationResponse heightType(HeightUnitType heightType) {
+  public MinMaxElevationResponse heightType(HeightUnitType heightType) {
     this.heightType = heightType;
     return this;
   }
@@ -72,33 +72,46 @@ public class ElevationResponse   {
     this.heightType = heightType;
   }
 
-  public ElevationResponse elevations(List<ElevationType> elevations) {
-    this.elevations = elevations;
-    return this;
-  }
-
-  public ElevationResponse addElevationsItem(ElevationType elevationsItem) {
-    if (this.elevations == null) {
-      this.elevations = new ArrayList<>();
-    }
-    this.elevations.add(elevationsItem);
+  public MinMaxElevationResponse minElevation(MinMaxElevationType minElevation) {
+    this.minElevation = minElevation;
     return this;
   }
 
   /**
-   * Get elevations
-   * @return elevations
+   * Get minElevation
+   * @return minElevation
   */
   @ApiModelProperty(value = "")
 
   @Valid
 
-  public List<ElevationType> getElevations() {
-    return elevations;
+  public MinMaxElevationType getMinElevation() {
+    return minElevation;
   }
 
-  public void setElevations(List<ElevationType> elevations) {
-    this.elevations = elevations;
+  public void setMinElevation(MinMaxElevationType minElevation) {
+    this.minElevation = minElevation;
+  }
+
+  public MinMaxElevationResponse maxElevation(MinMaxElevationType maxElevation) {
+    this.maxElevation = maxElevation;
+    return this;
+  }
+
+  /**
+   * Get maxElevation
+   * @return maxElevation
+  */
+  @ApiModelProperty(value = "")
+
+  @Valid
+
+  public MinMaxElevationType getMaxElevation() {
+    return maxElevation;
+  }
+
+  public void setMaxElevation(MinMaxElevationType maxElevation) {
+    this.maxElevation = maxElevation;
   }
 
 
@@ -110,25 +123,27 @@ public class ElevationResponse   {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    ElevationResponse elevationResponse = (ElevationResponse) o;
-    return Objects.equals(this.security, elevationResponse.security) &&
-        Objects.equals(this.heightType, elevationResponse.heightType) &&
-        Objects.equals(this.elevations, elevationResponse.elevations);
+    MinMaxElevationResponse minMaxElevationResponse = (MinMaxElevationResponse) o;
+    return Objects.equals(this.security, minMaxElevationResponse.security) &&
+        Objects.equals(this.heightType, minMaxElevationResponse.heightType) &&
+        Objects.equals(this.minElevation, minMaxElevationResponse.minElevation) &&
+        Objects.equals(this.maxElevation, minMaxElevationResponse.maxElevation);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(security, heightType, elevations);
+    return Objects.hash(security, heightType, minElevation, maxElevation);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class ElevationResponse {\n");
+    sb.append("class MinMaxElevationResponse {\n");
     
     sb.append("    security: ").append(toIndentedString(security)).append("\n");
     sb.append("    heightType: ").append(toIndentedString(heightType)).append("\n");
-    sb.append("    elevations: ").append(toIndentedString(elevations)).append("\n");
+    sb.append("    minElevation: ").append(toIndentedString(minElevation)).append("\n");
+    sb.append("    maxElevation: ").append(toIndentedString(maxElevation)).append("\n");
     sb.append("}");
     return sb.toString();
   }

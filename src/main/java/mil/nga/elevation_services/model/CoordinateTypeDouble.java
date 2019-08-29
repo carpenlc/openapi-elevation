@@ -10,57 +10,57 @@ import javax.validation.Valid;
 import javax.validation.constraints.*;
 
 /**
- * Error
+ * CoordinateTypeDouble
  */
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2019-08-29T11:50:00.502Z[Etc/GMT-0]")
 
-public class Error   {
-  @JsonProperty("code")
-  private Integer code;
+public class CoordinateTypeDouble   {
+  @JsonProperty("lat")
+  private Double lat;
 
-  @JsonProperty("message")
-  private String message;
+  @JsonProperty("lon")
+  private Double lon;
 
-  public Error code(Integer code) {
-    this.code = code;
+  public CoordinateTypeDouble lat(Double lat) {
+    this.lat = lat;
     return this;
   }
 
   /**
-   * Get code
-   * @return code
+   * Get lat
+   * @return lat
   */
   @ApiModelProperty(required = true, value = "")
   @NotNull
 
 
-  public Integer getCode() {
-    return code;
+  public Double getLat() {
+    return lat;
   }
 
-  public void setCode(Integer code) {
-    this.code = code;
+  public void setLat(Double lat) {
+    this.lat = lat;
   }
 
-  public Error message(String message) {
-    this.message = message;
+  public CoordinateTypeDouble lon(Double lon) {
+    this.lon = lon;
     return this;
   }
 
   /**
-   * Get message
-   * @return message
+   * Get lon
+   * @return lon
   */
   @ApiModelProperty(required = true, value = "")
   @NotNull
 
 
-  public String getMessage() {
-    return message;
+  public Double getLon() {
+    return lon;
   }
 
-  public void setMessage(String message) {
-    this.message = message;
+  public void setLon(Double lon) {
+    this.lon = lon;
   }
 
 
@@ -72,23 +72,23 @@ public class Error   {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    Error error = (Error) o;
-    return Objects.equals(this.code, error.code) &&
-        Objects.equals(this.message, error.message);
+    CoordinateTypeDouble coordinateTypeDouble = (CoordinateTypeDouble) o;
+    return Objects.equals(this.lat, coordinateTypeDouble.lat) &&
+        Objects.equals(this.lon, coordinateTypeDouble.lon);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(code, message);
+    return Objects.hash(lat, lon);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class Error {\n");
+    sb.append("class CoordinateTypeDouble {\n");
     
-    sb.append("    code: ").append(toIndentedString(code)).append("\n");
-    sb.append("    message: ").append(toIndentedString(message)).append("\n");
+    sb.append("    lat: ").append(toIndentedString(lat)).append("\n");
+    sb.append("    lon: ").append(toIndentedString(lon)).append("\n");
     sb.append("}");
     return sb.toString();
   }
