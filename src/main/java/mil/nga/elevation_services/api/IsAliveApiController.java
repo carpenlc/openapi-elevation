@@ -9,7 +9,7 @@ import org.springframework.web.context.request.NativeWebRequest;
 import mil.nga.util.FileUtils;
 
 import java.util.Optional;
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2019-08-29T11:50:00.502Z[Etc/GMT-0]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2019-09-10T14:44:29.236Z[Etc/GMT-0]")
 
 @Controller
 @RequestMapping("${openapi.elevationServices.base-path:/elevation/v1}")
@@ -26,7 +26,7 @@ public class IsAliveApiController implements IsAliveApi {
     public Optional<NativeWebRequest> getRequest() {
         return Optional.ofNullable(request);
     }
-    
+
     /**
      * Method manually added to generated stub providing the response 
      * associated with calls to the isAlive() end point.
@@ -38,5 +38,4 @@ public class IsAliveApiController implements IsAliveApi {
     	sb.append(" ] is alive!");
     	return new ResponseEntity<String>(sb.toString(), HttpStatus.OK);
     }
-
 }

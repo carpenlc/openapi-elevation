@@ -15,7 +15,7 @@ import javax.validation.constraints.*;
 /**
  * MinMaxElevationResponse
  */
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2019-08-29T11:50:00.502Z[Etc/GMT-0]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2019-09-10T14:44:29.236Z[Etc/GMT-0]")
 
 public class MinMaxElevationResponse   {
   @JsonProperty("security")

@@ -17,9 +17,8 @@ import mil.nga.elevation_services.model.ElevationQuery;
 import mil.nga.elevation_services.model.ElevationResponse;
 import mil.nga.elevation_services.model.Error;
 
-import java.util.List;
 import java.util.Optional;
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2019-08-29T11:50:00.502Z[Etc/GMT-0]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2019-09-10T14:44:29.236Z[Etc/GMT-0]")
 
 @Controller
 @RequestMapping("${openapi.elevationServices.base-path:/elevation/v1}")
@@ -51,7 +50,7 @@ public class ElevationAtApiController implements ElevationAtApi {
 
     @Override
     public ResponseEntity<Object> getElevationAtGET(
-    		List<String> pts,  
+    		String pts,  
     		String heightType,
             String source,
             String operation) {
@@ -80,7 +79,7 @@ public class ElevationAtApiController implements ElevationAtApi {
     		Error err = new Error();
     		err.setCode(ae.getErrorCode());
     		err.setMessage(ae.getErrorMessage());
-    		return ResponseEntity.ok(err);
+    		return new ResponseEntity<Object>(err, HttpStatus.BAD_REQUEST);
     	}
     	if (response == null) {
     		LOGGER.error("Unable to generate a valid response for "
@@ -90,11 +89,14 @@ public class ElevationAtApiController implements ElevationAtApi {
     		Error err = new Error();
     		err.setCode(ErrorCodes.INTERNAL_EXCEPTION.getErrorCode());
     		err.setMessage(ErrorCodes.INTERNAL_EXCEPTION.getErrorMessage());
-    		return ResponseEntity.ok(err);
+    		return new ResponseEntity<Object>(err, HttpStatus.INTERNAL_SERVER_ERROR);
     	}
     	return new ResponseEntity<Object>(response, HttpStatus.OK);
     }
     
+    /**
+     * 
+     */
     @Override
     public ResponseEntity<Object> getElevationAtPOST(ElevationQuery elevationQuery) {
     	
@@ -122,7 +124,7 @@ public class ElevationAtApiController implements ElevationAtApi {
 			Error err = new Error();
 			err.setCode(ae.getErrorCode());
 			err.setMessage(ae.getErrorMessage());
-			return ResponseEntity.ok(err);
+			return new ResponseEntity<Object>(err, HttpStatus.BAD_REQUEST);
 		}
     	if (response == null) {
     		LOGGER.error("Unable to generate a valid response for "
@@ -132,7 +134,7 @@ public class ElevationAtApiController implements ElevationAtApi {
     		Error err = new Error();
     		err.setCode(ErrorCodes.INTERNAL_EXCEPTION.getErrorCode());
     		err.setMessage(ErrorCodes.INTERNAL_EXCEPTION.getErrorMessage());
-    		return ResponseEntity.ok(err);
+    		return new ResponseEntity<Object>(err, HttpStatus.INTERNAL_SERVER_ERROR);
     	}
     	return new ResponseEntity<Object>(response, HttpStatus.OK);
     }
