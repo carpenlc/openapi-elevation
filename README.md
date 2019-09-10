@@ -21,6 +21,7 @@ Change default port value in application.properties# openapi-elevation
 
 wget http://central.maven.org/maven2/org/openapitools/openapi-generator-cli/4.1.0/openapi-generator-cli-4.1.0.jar -O openapi-generator-cli.jar
 
+ java -jar /export/home/carpenlc/openapi/openapi-generator/modules/openapi-generator-cli/target/openapi-generator-cli.jar generate --generator-name spring -i ./src/main/resources/elevation_services.yaml --invoker-package mil.nga.elevation_services --model-package mil.nga.elevation_services.model --api-package  mil.nga.elevation_services.api -o /export/home/carpenlc/java/openapi-generated
 
 java -jar /opt/openapi-generator/openapi-generator-cli.jar \
   generate \
