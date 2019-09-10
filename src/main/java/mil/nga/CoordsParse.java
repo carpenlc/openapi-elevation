@@ -336,14 +336,16 @@ public class CoordsParse {
     /*
      * parseCoordString 
      *
-     * Parses a coordinate and returns the decimal degree equivalent of the coordinate.
+     * Parses a coordinate and returns the decimal degree equivalent of the 
+     * coordinate.
      *
      * Inputs:
      *      strUserInput: Any valid coordinate (DMS or DD)
      *      blnLat: true => strUserInput is latitude 
      *              false => strUserInput is longitude
      *
-     * Returns: Decimal degree value of strUserInput.  Return value < -900 implies an error occured during the parse.
+     * Returns: Decimal degree value of strUserInput.  Return value < -900 
+     * implies an error occured during the parse.
      *
      */
 
@@ -359,9 +361,12 @@ public class CoordsParse {
     /**
      * 
      * Program returns the decimal degree value cooresponding to the user input.
-     * @param strUserInput User inputs a string with any <a href="http://localhost:9090/docs/EarthCoordFormats.html">valid Earth Coordinate format</a>.
-     * @param blnLat true implies the coordinate is a latitude value; false implies a longitude.
-     * @return returns a double number.  The number will be either the decimal degree value or an error code.  Return values < -900 are error codes.
+     * @param strUserInput User inputs a string with any 
+     * <a href="http://localhost:9090/docs/EarthCoordFormats.html">valid Earth Coordinate format</a>.
+     * @param blnLat true implies the coordinate is a latitude value; false 
+     * implies a longitude.
+     * @return returns a double number.  The number will be either the decimal 
+     * degree value or an error code.  Return values < -900 are error codes.
      */
     public double parseCoordString(String strUserInput, boolean blnLat) {
 

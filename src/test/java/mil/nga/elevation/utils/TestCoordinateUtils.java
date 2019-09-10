@@ -1,7 +1,12 @@
 package mil.nga.elevation.utils;
 
+import java.util.List;
+
 import org.junit.Assert;
 import org.junit.Test;
+
+import mil.nga.elevation.exceptions.ApplicationException;
+import mil.nga.elevation.model.GeodeticCoordinate;
 
 public class TestCoordinateUtils {
 

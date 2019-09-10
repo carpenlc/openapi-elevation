@@ -42,6 +42,14 @@ public interface Constants {
 	public static final String DEFAULT_PRODUCER = "USA";
 	
 	/**
+	 * In order to ensure that the application can respond in a timely manner 
+	 * we limit the size of bounding boxes based on the DTED level.
+	 */
+	public static final double MAX_BBOX_DEG_LVL0 = 16.0;
+	public static final double MAX_BBOX_DEG_LVL1 = 4.0;
+	public static final double MAX_BBOX_DEG_LVL2 = 1.0;
+    
+	/**
 	 * Default method used to convert meters to feet.
 	 * 
 	 * @param meters The number of meters.

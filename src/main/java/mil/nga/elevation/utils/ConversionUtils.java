@@ -10,8 +10,10 @@ import mil.nga.elevation.ErrorCodes;
 import mil.nga.elevation.exceptions.ApplicationException;
 import mil.nga.elevation.model.GeodeticCoordinate;
 import mil.nga.elevation_services.model.CoordinateType;
+import mil.nga.elevation_services.model.CoordinateTypeArray;
 import mil.nga.elevation_services.model.ElevationQuery;
 import mil.nga.elevation_services.model.HeightUnitType;
+import mil.nga.elevation_services.model.MinMaxElevationQuery;
 import mil.nga.elevation_services.model.TerrainDataFileType;
 
 /**
@@ -176,6 +178,41 @@ public class ConversionUtils {
 	
 	/**
 	 * This method is used to generate a String-based message from the 
+	 * parameters that were submitted as part of an HTTP POST call to the 
+	 * <code>CoveragesAvailable</code> end-point.  This is only used for 
+	 * logging purposes. 
+	 * 
+	 * @param coordinateTypeArray User-submitted array of coordinates.
+	 * @return A human-readable String containing the list of coordinates.
+	 */
+	public static String toString(CoordinateTypeArray coordinateTypeArray) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("Coordinates: [ ");
+		if ((coordinateTypeArray != null) && 
+				(coordinateTypeArray.getCoordinates() != null) && 
+				(coordinateTypeArray.getCoordinates().size() > 0)) {
+			int counter = 0;
+			for (CoordinateType coord : coordinateTypeArray.getCoordinates()) {
+				sb.append("{Lat:[ ");
+				sb.append(coord.getLat());
+				sb.append(" ], lon:[ ");
+				sb.append(coord.getLon());
+				sb.append(" ]}");
+				counter++;
+				if (counter != coordinateTypeArray.getCoordinates().size()) {
+					sb.append(", ");
+				}
+			}
+		}
+		else {
+			sb.append("null");
+		}
+		sb.append(" ]");
+		return sb.toString();
+	}
+	
+	/**
+	 * This method is used to generate a String-based message from the 
 	 * parameters that were submitted as part of an HTTP GET call to the 
 	 * <code>ElevationAt</code> end-point.  This is only used for logging
 	 * purposes. 
@@ -186,7 +223,7 @@ public class ConversionUtils {
 	 * @return A concatenated String of the input function arguments.
 	 */
 	public static String toString(
-			List<String> pts,  
+			String pts,  
     		String heightType,
             String source) {
 		StringBuilder sb = new StringBuilder();
@@ -199,19 +236,77 @@ public class ConversionUtils {
 			sb.append(source.trim());
 		}
 		sb.append(" ], Points [ ");
-		if ((pts != null) && (pts.size() > 0)) { 
-			int counter = 0;
-			for (String pt : pts) {
-				sb.append(pt);
-				counter++;
-				if (counter != pts.size()) {
-					sb.append(", ");
-				}
-			}
+		if (pts != null) {
+			sb.append(pts);
 		}
 		else {
 			sb.append("none");
 		}
+		sb.append(" ]");
+		return sb.toString();
+	}
+	
+	/**
+	 * This method is used to generate a String-based message from the 
+	 * parameters that were submitted as part of an HTTP POST call to the 
+	 * <code>MinMaxElevation</code> end-point.  This is only used for logging
+	 * purposes. 
+	 *   
+	 * @param query The deserialized query object.
+	 * @return A concatenated String of the input function arguments.
+	 */
+	public static String toString(MinMaxElevationQuery query) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("Bounding Box [ lllat:");
+		sb.append(query.getBbox().getLllat());
+		sb.append(", lllon:");
+		sb.append(query.getBbox().getLllon());
+		sb.append(", urlat:");
+		sb.append(query.getBbox().getUrlat());
+		sb.append(", urlon:");
+		sb.append(query.getBbox().getUrlon());
+		sb.append(" ], Units [ ");
+		sb.append(query.getHeightType().toString());
+		sb.append(" ], Source [ ");
+		sb.append(query.getSource().toString());
+		sb.append(" ]");
+		return sb.toString();
+	}
+	
+	/**
+	 * This method is used to generate a String-based message from the 
+	 * parameters that were submitted as part of an HTTP GET call to the 
+	 * <code>MinMaxElevation</code> end-point.  This is only used for logging
+	 * purposes. 
+	 * 
+	 * @param lllon The lower-left longitude value.
+	 * @param lllat The lower-left latitude value.
+	 * @param urlon The upper-right longitude value.
+	 * @param urlat The upper-right latitude value.
+	 * @param heightType The output elevation units.
+	 * @param source The source DEM type.
+	 * @return A concatenated String of the input function arguments.
+	 */
+	public static String toString(
+			String lllon, 
+			String lllat, 
+			String urlon, 
+			String urlat, 
+			String heightType,
+			String source) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("Bounding Box [ lllat:");
+		sb.append(lllat);
+		sb.append(", lllon:");
+		sb.append(lllon);
+		sb.append(", urlat:");
+		sb.append(urlat);
+		sb.append(", urlon:");
+		sb.append(urlon);
+		sb.append(" ], Units [ ");
+		sb.append(heightType);
+		sb.append(" ], Source [ ");
+		sb.append(source);
 		sb.append(" ]");
 		return sb.toString();
 	}
@@ -252,4 +347,57 @@ public class ConversionUtils {
 		}
 		return sb.toString();
 	}
+	
+    /**
+     * Method used to split a comma-separated String into a list of 
+     * <code>GeodeticCoordinate</code> objects.  The method will raise 
+     * exceptions if coordinate values are out of range.
+     * 
+     * @param pts A comma-separated list of points.
+     * @return A list of <code>GeodeticCoordinate</code> objects.
+     * @throws ApplicationException If input coordinates are out of range.
+     */
+    public static List<GeodeticCoordinate> parseCoords(String pts) 
+    		throws ApplicationException {
+    	
+    	List<GeodeticCoordinate> coords = new ArrayList<GeodeticCoordinate>();
+    	
+    	if ((pts != null) && (!pts.isEmpty())) {
+    		String[] split = pts.split(",");
+    		if (split.length % 2 == 0) {
+    			for (int i=0; i < split.length; i+=2) {
+    				try {
+	    				GeodeticCoordinate coord = 
+	    						new GeodeticCoordinate.GeodeticCoordinateBuilder()
+	    							.lon(split[i])
+	    							.lat(split[i+1])
+	    							.build();
+	    				coords.add(coord);
+    				}
+    				catch (IllegalStateException ise) {
+    					LOGGER.error("IllegalStateException encountered while "
+    							+ "parsing input coordinates.  "
+    							+ "Error message => [ "
+    							+ ise.getMessage()
+    							+ " ].");
+    	    			throw new ApplicationException.ApplicationExceptionBuilder()
+    						.errorCode(
+    								ErrorCodes.INVALID_INPUT_COORDINATES.getErrorCode())
+    						.errorMessage(
+    								ErrorCodes.INVALID_INPUT_COORDINATES.getErrorMessage())
+    						.build();
+    				}
+    			}
+    		}
+    		else {
+    			throw new ApplicationException.ApplicationExceptionBuilder()
+    					.errorCode(
+    							ErrorCodes.INVALID_NUMBER_OF_INPUT_COORDINATES.getErrorCode())
+    					.errorMessage(
+    							ErrorCodes.INVALID_NUMBER_OF_INPUT_COORDINATES.getErrorMessage())
+    					.build();
+    		}
+    	}
+    	return coords;
+    }
 }

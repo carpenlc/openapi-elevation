@@ -48,11 +48,15 @@ public class ElevationDataService {
 	TerrainDataFileService repository;
 	
 	/**
+	 * Convert a list of <code>ElevationDataPoint</code> objects into an 
+	 * object of type <code>ElevationResponse</code> for return to the caller.
 	 * 
-	 * @param elevations
-	 * @return
+	 * @param elevations A list of elevations.
+	 * @return The object that will be serialized and sent to the caller.
 	 */
-	private ElevationResponse convertToResponse(List<ElevationDataPoint> elevations) {
+	private ElevationResponse convertToResponse(
+			List<ElevationDataPoint> elevations) {
+		
 		ElevationResponse response = new ElevationResponse();
 		String marking = "";
 		
@@ -112,7 +116,7 @@ public class ElevationDataService {
 	 * any exceptions encountered throughout processing.
 	 */
 	public ElevationResponse getElevationAt(
-			List<String> pts,  
+			String pts,  
     		String heightType,
             String source) throws ApplicationException {
 		
@@ -125,7 +129,7 @@ public class ElevationDataService {
 		TerrainDataFileType      sourceDEM = 
 				ConversionUtils.convertTerrainDataFileType(source);
 		List<GeodeticCoordinate> coords    = 
-				ConversionUtils.parseInputCoordinateList(pts);
+				ConversionUtils.parseCoords(pts);
 		
 		if ((coords != null) && (coords.size() > 0)) { 
 			LOGGER.info("Processing [ "
@@ -138,6 +142,7 @@ public class ElevationDataService {
 					List<TerrainDataFile> files = repository.getTerrainDataFiles(
 							coord, 
 							sourceDEM);
+					
 					if ((files != null) && (files.size() > 0)) {
 						if (LOGGER.isDebugEnabled()) {
 							System.out.println("Using source file [ "

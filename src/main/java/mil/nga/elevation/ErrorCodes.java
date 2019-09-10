@@ -3,6 +3,9 @@ package mil.nga.elevation;
 public enum ErrorCodes {
 	DB_CONNECTION_ERROR(-1001, "Unable to connect to the target data source."),
 	INVALID_QUERY(-1005, "Invalid input query.  Unable to process."),
+	INVALID_QUERY_NO_LAT(-1006, "Invalid input query.  Latitude not defined."),
+	INVALID_QUERY_NO_LON(-1007, "Invalid input query.  Longitude not defined."),
+	INVALID_QUERY_NO_COORDINATES(-1008, "Invalid input query.  Array of coordinates not supplied."),
 	INVALID_UNITS(-1010, "Invalid height units.  Application supports FEET, METERS."),
 	INVALID_SOURCE_TYPE(-1010, "Invalid source DEM specified"),
 	INVALID_INPUT_COORDINATES(-1015, "Invalid input coordinates."),

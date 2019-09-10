@@ -97,7 +97,23 @@ public class TestConversionUtils {
 		List<String> pts = new ArrayList<String>(); 
 		ConversionUtils.parseInputCoordinateList(pts);
 	}
-	
+
+	@Test
+	public void testParseCoords() throws ApplicationException {
+		String coords1 = "9.3,9.3";
+		List<GeodeticCoordinate> coordList1 = ConversionUtils.parseCoords(coords1);
+		Assert.assertEquals(coordList1.size(), 1);
+		Assert.assertEquals(coordList1.get(0).getLat(), 9.3, 0);
+		Assert.assertEquals(coordList1.get(0).getLon(), 9.3, 0);
+		String coords2 = "9.3,9.3,10.1,10.1";
+		List<GeodeticCoordinate> coordList2 = ConversionUtils.parseCoords(coords2);
+		Assert.assertEquals(coordList2.size(), 2);
+		Assert.assertEquals(coordList2.get(0).getLat(), 9.3, 0);
+		Assert.assertEquals(coordList2.get(0).getLon(), 9.3, 0);
+		Assert.assertEquals(coordList2.get(1).getLat(), 10.1, 0);
+		Assert.assertEquals(coordList2.get(1).getLon(), 10.1, 0);
+	}
+	/*
 	@Test
 	public void testToString1() {
 		List<String> pts = new ArrayList<String>(); 
@@ -110,4 +126,5 @@ public class TestConversionUtils {
 				"Units [ FEET ], Source DEM [ DTED0 ], Points [ 106 23 38 W, 37 20 19 N, 9.3, 9.3, 106 20 00 W ]",
 				ConversionUtils.toString(pts, "FEET", "DTED0"));
 	}
+	*/
 }

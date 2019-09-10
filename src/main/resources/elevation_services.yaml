@@ -107,14 +107,10 @@ paths:
             - BEST
         - in: query
           name: pts
-          description: List of geographic points in lon, lat order.  The coordinates can be specified in either DMS format or decimal degrees.
+          description: Comma seperated list of geographic points in lon, lat order.  The coordinates can be specified in either DMS format or decimal degrees.
           required: true
           schema:
-            type: array
-            items:
-              type: string
-            minItems: 2
-            maxItems: 20
+            type: string
         - in: query
           name: operation
           description: This parameter is no longer used.
@@ -173,15 +169,45 @@ paths:
               - FEET
               - METERS
         - in: query
-          name: bbox
-          description: A bounding box containing the southwest and northeast coordinates in lon, lat order.   The coordinates can be specified in either DMS format or decimal degrees.
+          name: source
+          description: The source DEM type to use for calculating the elevation height data.
+          required: false
+          schema:
+            type: string
+            default: DTED0
+            enum:
+            - DTED2
+            - DTED1
+            - DTED0
+            - SRTM2
+            - SRTM1
+            - SRTM2F
+            - SRTM1F
+            - BEST
+        - in: query
+          name: lllon
+          description: The lower-left longitude coordinate of a bounding box.   The coordinates can be specified in either DMS format or decimal degrees.
           required: true
           schema:
-            type: array
-            items:
-              type: string
-            minItems: 4
-            maxItems: 4
+            type: string
+        - in: query
+          name: lllat
+          description: The lower-left latitude coordinate of a bounding box.   The coordinates can be specified in either DMS format or decimal degrees.
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: urlon
+          description: The upper-right longitude coordinate of a bounding box.   The coordinates can be specified in either DMS format or decimal degrees.
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: urlat
+          description: The upper-right latitude coordinate of a bounding box.   The coordinates can be specified in either DMS format or decimal degrees.
+          required: true
+          schema:
+            type: string
         - in: query
           name: operation
           description: This parameter is no longer used.
@@ -239,6 +265,22 @@ paths:
             enum: 
               - FEET
               - METERS
+        - in: query
+          name: source
+          description: The source DEM type to use for calculating the elevation height data.
+          required: false
+          schema:
+            type: string
+            default: DTED0
+            enum:
+            - DTED2
+            - DTED1
+            - DTED0
+            - SRTM2
+            - SRTM1
+            - SRTM2F
+            - SRTM1F
+            - BEST
         - in: query
           name: wkt
           description: A well known text String.
@@ -435,6 +477,8 @@ components:
           $ref: '#/components/schemas/BoundingBoxType'
         heightType:
           $ref: '#/components/schemas/HeightUnitType'
+        source: 
+          $ref: '#/components/schemas/TerrainDataFileType'
     MinMaxElevationQueryWKT:
       type: object
       properties:
@@ -442,6 +486,8 @@ components:
           type: string
         heightType:
           $ref: '#/components/schemas/HeightUnitType'
+        source: 
+          $ref: '#/components/schemas/TerrainDataFileType'
     ElevationResponse:
       type: object
       properties:

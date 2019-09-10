@@ -1,15 +1,60 @@
 package mil.nga.elevation.utils;
 
+import mil.nga.CoordsParse;
+import mil.nga.ErrorMessageType;
+import mil.nga.elevation.exceptions.ApplicationException;
+
 /**
- * Class containing static methods that are used to determine what frame file
- * will contain an individual point.  It determines the southwest corner of 
- * the 1 degree cell which will contain the point. 
+ * Class containing static methods that are used to manipulate coordinates
+ * as needed for further processing within the elevation services applications.
  * 
  * @author L. Craig Carpenter
  */
 public class CoordinateUtils {
-
+    
+	/**
+	 * This method is a wrapper around the CoordsParse algorithm to perform
+	 * a coordinate conversion and handle any potential errors.  If errors
+	 * occur they are forwarded to the caller via exception.
+	 * 
+	 * @param value A candidate latitude value.
+	 * @return double representing the input latitude value.
+	 * @throws ApplicationException thrown if the input String cannot be 
+	 * parsed into a valid latitude.
+	 */
+	public static double parseLat(String value) throws ApplicationException {
+		CoordsParse parser = CoordsParse.getInstance();
+		double parsed = parser.parseCoordString(value, true);
+		if (parsed < -900.0) {
+			throw new ApplicationException.ApplicationExceptionBuilder()
+				.errorCode((int)parsed)
+				.errorMessage(ErrorMessageType.getErrorMessage(parsed))
+				.build();
+		}
+		return parsed;
+	}
 	
+	/**
+	 * This method is a wrapper around the CoordsParse algorithm to perform
+	 * a coordinate conversion and handle any potential errors.  If errors
+	 * occur they are forwarded to the caller via exception.
+	 * 
+	 * @param value A candidate longitude value.
+	 * @return double representing the input longitude value.
+	 * @throws ApplicationException thrown if the input String cannot be 
+	 * parsed into a valid longitude.
+	 */
+	public static double parseLon(String value) throws ApplicationException {
+		CoordsParse parser = CoordsParse.getInstance();
+		double parsed = parser.parseCoordString(value, false);
+		if (parsed < -900.0) {
+			throw new ApplicationException.ApplicationExceptionBuilder()
+				.errorCode((int)parsed)
+				.errorMessage(ErrorMessageType.getErrorMessage(parsed))
+				.build();
+		}
+		return parsed;
+	}
 	
 	/**
 	 * Safely truncate the input double value to get the southwest
@@ -76,5 +121,4 @@ public class CoordinateUtils {
         }
     	return sb.toString();
     }
-
 }
