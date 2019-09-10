@@ -55,4 +55,18 @@ public interface TerrainDataFileDAO
     public List<TerrainDataFile> findByLatAndLon (
     		@Param("latitude")  String lat, 
     		@Param("longitude") String lon);
+	
+	/**
+	 * Method used to retrieve a list of source DEM types available for a
+	 * caller supplied latitude and longitude.  
+	 * 
+	 * @param lat The latitude value.
+	 * @param lon The longitude value.
+	 * @return A <code>List</code> of DEM types available for a given 
+	 * latitude/longitude coordinate pair.
+	 */
+	@Query("SELECT T.source FROM TerrainDataFile T WHERE T.lat = :latitude AND T.lon = :longitude order by T.best")
+	public List<String> findCoverageByLatAndLon(
+			@Param("latitude")  String lat, 
+    		@Param("longitude") String lon);
 }

@@ -4,12 +4,8 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.Table;
-
-import mil.nga.elevation_services.model.TerrainDataFileType;
 
 /**
  * This entity represents a row in the <code>TERRAIN_DATA_FILES</code> table
