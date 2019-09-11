@@ -7,15 +7,19 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import mil.nga.elevation.Constants;
 import mil.nga.elevation.ElevationExtremesFactory;
 import mil.nga.elevation.dao.TerrainDataFile;
 import mil.nga.elevation.exceptions.ApplicationException;
 import mil.nga.elevation.model.BoundingBox;
+import mil.nga.elevation.model.ElevationDataPoint;
 import mil.nga.elevation.model.MinMaxElevation;
 import mil.nga.elevation.utils.ConversionUtils;
+import mil.nga.elevation_services.model.CoordinateTypeDouble;
 import mil.nga.elevation_services.model.HeightUnitType;
 import mil.nga.elevation_services.model.MinMaxElevationQuery;
 import mil.nga.elevation_services.model.MinMaxElevationResponse;
+import mil.nga.elevation_services.model.MinMaxElevationType;
 import mil.nga.elevation_services.model.TerrainDataFileType;
 
 /**
@@ -26,7 +30,7 @@ import mil.nga.elevation_services.model.TerrainDataFileType;
  * @author L. Craig Carpenter
  */
 @Component
-public class ElevationExtremesService {
+public class ElevationExtremesService implements Constants {
 
     /**
      * Set up the Logback system for use throughout the class.
@@ -50,13 +54,118 @@ public class ElevationExtremesService {
 	 */
 	private MinMaxElevationResponse convertToResponse(MinMaxElevation minMax) {
 		
-		return null;
+		CoordinateTypeDouble    minCoordinate = new CoordinateTypeDouble();
+		CoordinateTypeDouble    maxCoordinate = new CoordinateTypeDouble();
+		MinMaxElevationType     minElevation  = new MinMaxElevationType();
+		MinMaxElevationType     maxElevation  = new MinMaxElevationType();
+		MinMaxElevationResponse response      = new MinMaxElevationResponse();
+		
+		// Set the min elevation data
+		minCoordinate.setLat(minMax.getMinElevation().getGeodeticCoordinate().getLat());
+		minCoordinate.setLon(minMax.getMinElevation().getGeodeticCoordinate().getLon());
+		minElevation.setCoordinate(minCoordinate);
+		minElevation.setAbsHorizontalAccuracy(minMax.getMinElevation().getAccuracy().getAbsHorzAccuracy());
+		minElevation.setAbsVerticalAccuracy(minMax.getMinElevation().getAccuracy().getAbsVertAccuracy());
+		minElevation.setRelHorizontalAccuracy(minMax.getMinElevation().getAccuracy().getRelHorzAccuracy());
+		minElevation.setRelVerticalAccuracy(minMax.getMinElevation().getAccuracy().getRelVertAccuracy());
+		minElevation.setElevation(minMax.getMinElevation().getElevation());
+		minElevation.setSource(minMax.getMinElevation().getSource());
+		
+		// Set the maximum elevation data
+		maxCoordinate.setLat(minMax.getMaxElevation().getGeodeticCoordinate().getLat());
+		maxCoordinate.setLon(minMax.getMaxElevation().getGeodeticCoordinate().getLon());
+		maxElevation.setCoordinate(maxCoordinate);
+		maxElevation.setAbsHorizontalAccuracy(minMax.getMaxElevation().getAccuracy().getAbsHorzAccuracy());
+		maxElevation.setAbsVerticalAccuracy(minMax.getMaxElevation().getAccuracy().getAbsVertAccuracy());
+		maxElevation.setRelHorizontalAccuracy(minMax.getMaxElevation().getAccuracy().getRelHorzAccuracy());
+		maxElevation.setRelVerticalAccuracy(minMax.getMaxElevation().getAccuracy().getRelVertAccuracy());
+		maxElevation.setElevation(minMax.getMaxElevation().getElevation());
+		maxElevation.setSource(minMax.getMaxElevation().getSource());
+		
+		// Set the response data
+		response.setMinElevation(minElevation);
+		response.setMaxElevation(maxElevation);
+		response.setHeightType(minMax.getMaxElevation().getUnits());
+		return response;
+		
 	}
 	
-	private MinMaxElevation compare(MinMaxElevation previous, MinMaxElevation current) {
-		return null;
+	/**
+	 * This method will compare the input objects and return a composite 
+	 * <code>MinMaxElevation</code> object that contains the lowest min and 
+	 * highest max from the two input objects.
+	 *   
+	 * @param previous Assumed to be the previous accumulator.
+	 * @param current The current min/max elevation.
+	 * @return The min/max from the input objects.
+	 */
+	private MinMaxElevation compare(
+			MinMaxElevation previous, 
+			MinMaxElevation current) {
+		
+		MinMaxElevation.MinMaxElevationBuilder builder = 
+				new MinMaxElevation.MinMaxElevationBuilder();
+		
+		if (current != null) {
+			if (previous == null) {
+				builder.maxElevation(current.getMaxElevation().clone());
+				builder.minElevation(current.getMinElevation().clone());
+			}
+			else {
+				
+				// Compare the maximum elevations.
+				if (current.getMaxElevation().getElevation() > 
+					previous.getMaxElevation().getElevation()) {
+					builder.maxElevation(current.getMaxElevation().clone());
+				}
+				else {
+					builder.maxElevation(previous.getMaxElevation().clone());
+				}
+				
+				// Compare the minimum elevations
+				if (current.getMinElevation().getElevation() < 
+						previous.getMinElevation().getElevation()) {
+					builder.minElevation(current.getMinElevation().clone());
+				}
+				else {
+					builder.minElevation(previous.getMinElevation().clone());
+				}
+			}
+		}
+		else {
+			if (previous != null) {
+				builder.maxElevation(previous.getMaxElevation().clone());
+				builder.minElevation(previous.getMinElevation().clone());
+			}
+			else {
+				// Return defaults.
+				builder.minElevation(
+						new ElevationDataPoint.ElevationDataPointBuilder()
+							.elevation(MAX_ELEVATION)
+							.build());
+				builder.maxElevation(
+						new ElevationDataPoint.ElevationDataPointBuilder()
+							.elevation(INVALID_ELEVATION_VALUE)
+							.build());
+			}
+		}
+		return builder.build();
 	}
 	
+	/**
+	 * Convenience method used to convert the user-supplied parameters
+	 * from the HTTP GET call to the MinMaxElevation end point into a 
+	 * format expected by the ElevationExtremesFactory class.
+	 * 
+	 * @param lllon lower-left longitude.
+	 * @param lllat lower-left latitude.
+	 * @param urlon upper-right longitude.
+	 * @param urlat upper-right latitude.
+	 * @param units The output units for the elevation values.
+	 * @param source The source DEM type.
+	 * @return Response object to be serialized and sent to the caller.
+	 * @throws ApplicationException Thrown for all known issues.
+	 */
 	public MinMaxElevationResponse getMinMaxElevation(
 			String lllon,
     		String lllat,
@@ -79,11 +188,17 @@ public class ElevationExtremesService {
 	}
 	
 	/**
-	 * 
-	 * @param query
-	 * @return
+	 * Convenience method used to convert the user-supplied parameters
+	 * from the HTTP POST call to the MinMaxElevation end point into a 
+	 * format expected by the ElevationExtremesFactory class.
+	 *  
+	 * @param query Deserialized query object.
+	 * @return Response object to be serialized and sent to the caller.
+	 * @throws ApplicationException Thrown for all known issues.
 	 */
-	public MinMaxElevationResponse getMinMaxElevation(MinMaxElevationQuery query) throws ApplicationException {
+	public MinMaxElevationResponse getMinMaxElevation(
+			MinMaxElevationQuery query) 
+					throws ApplicationException {
 		
 		BoundingBox bbox = new BoundingBox.BoundingBoxBuilder()
 				.lowerLeftLat(query.getBbox().getLllat())
@@ -96,6 +211,19 @@ public class ElevationExtremesService {
 		
 	}
 	
+	/**
+	 * This method calculates the cells that intersect the user-defined 
+	 * bounding box, then retrieves the cell information from the backing
+	 * data repository.  The <code>ElevationExtremesFactory</code> is then
+	 * called to determine the minimum and maximum elevation values 
+	 * within user-defined bounding box.
+	 * 
+	 * @param bbox User-defined bounding box.
+	 * @param units The output units for the elevation values. 
+	 * @param source The source DEM type.
+	 * @return Response object to be serialized and sent to the caller.
+	 * @throws ApplicationException
+	 */
 	public MinMaxElevationResponse getMinMaxElevation(
 			BoundingBox bbox,
 			HeightUnitType units,
@@ -142,7 +270,9 @@ public class ElevationExtremesService {
         					+ source.toString()
         					+ " ].");
         		}
+        		lon += 1; // Increment the longitude counter
         	}
+        	lat += 1; // Increment the latitude counter
         }
         return convertToResponse(minMax);
 	}
