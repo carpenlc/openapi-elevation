@@ -151,7 +151,7 @@ public class ElevationDataPoint implements Serializable, Cloneable, Constants {
 		private GeodeticCoordinate  coordinate;
 		private DEMFrameAccuracy    accuracy;
 		private HeightUnitType      units  = HeightUnitType.METERS;
-		private TerrainDataFileType source = TerrainDataFileType.BEST;
+		private TerrainDataFileType source = TerrainDataFileType.DTED0;
 		
 		/**
 		 * Setter method for the source classification marking.
@@ -162,6 +162,7 @@ public class ElevationDataPoint implements Serializable, Cloneable, Constants {
 			classificationMarking = value;
 			return this;
 		}
+		
 		/**
 		 * Setter method for the units associated with any length 
 		 * data.
@@ -238,6 +239,12 @@ public class ElevationDataPoint implements Serializable, Cloneable, Constants {
 			if ((classificationMarking == null) || 
 					classificationMarking.isEmpty()) {
 				classificationMarking = DEFAULT_CLASSIFICATION_MARKING;
+			}
+			if (accuracy == null) {
+				accuracy = new DEMFrameAccuracy.DEMFrameAccuracyBuilder().build();
+			}
+			if (coordinate == null) {
+				coordinate = new GeodeticCoordinate.GeodeticCoordinateBuilder().build();
 			}
 			ElevationDataPoint point = new ElevationDataPoint(this);
 			validate(point);

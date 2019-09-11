@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import mil.nga.CoordsParse;
 import mil.nga.ErrorMessageType;
+import mil.nga.elevation.exceptions.ApplicationException;
 
 /**
  * Simple data structure holding a single geodetic coordinate (lat/lon).  
@@ -108,8 +109,8 @@ public class GeodeticCoordinate implements Serializable, Cloneable {
      */
 	public static class GeodeticCoordinateBuilder {
 		
-		private double lat;
-		private double lon;
+		private double lat    = 0.0;
+		private double lon    = 0.0;
 		private String latStr = null;
 		private String lonStr = null;
 		
@@ -132,9 +133,23 @@ public class GeodeticCoordinate implements Serializable, Cloneable {
 		 */
 		public GeodeticCoordinateBuilder lat(String lat) 
 				throws IllegalStateException {
+			CoordsParse parser = CoordsParse.getInstance();
 			if ((lat != null) && (!lat.isEmpty())) { 
 				this.latStr = lat.trim();
-				this.lat = CoordsParse.getInstance().parseCoordString(lat, true);
+				double parsed = parser.parseCoordString(this.latStr, true);
+				if (parsed < -900.0) {
+					throw new IllegalStateException("Unable to parse "
+							+ "latitude coordinate.  Input [ "
+							+ lat
+							+ " ].  Error code [ "
+							+ (int)parsed
+							+ " ], error message [ "
+							+ ErrorMessageType.getErrorMessage(parsed)
+							+ " ].");
+				}
+				else {
+					this.lat = parsed;
+				}
 			}
 			else {
 				throw new IllegalStateException(
@@ -164,9 +179,25 @@ public class GeodeticCoordinate implements Serializable, Cloneable {
 		 */
 		public GeodeticCoordinateBuilder lon(String lon) 
 				throws IllegalStateException {
+			
+			CoordsParse parser = CoordsParse.getInstance();
+			
 			if ((lon != null) && (!lon.isEmpty())) {
 				this.lonStr = lon.trim();
-				this.lon = CoordsParse.getInstance().parseCoordString(lon, false);
+				double parsed = parser.parseCoordString(this.lonStr, false);
+				if (parsed < -900.0) {
+					throw new IllegalStateException("Unable to parse "
+							+ "longitude coordinate.  Input [ "
+							+ lat
+							+ " ].  Error code [ "
+							+ (int)parsed
+							+ " ], error message [ "
+							+ ErrorMessageType.getErrorMessage(parsed)
+							+ " ].");
+				}
+				else {
+					this.lon = parsed;
+				}
 			}
 			else {
 				throw new IllegalStateException(
@@ -211,7 +242,7 @@ public class GeodeticCoordinate implements Serializable, Cloneable {
 	            	    + " ].");
 	        }
 	        // Next, make sure the coordinates are within valid ranges.
-	        if (coord.getLon() > 179) {
+	        if (coord.getLon() > 180) {
 	            throw new IllegalStateException(
 	            		"Invalid longitude value => [ " 
 	            	    + coord.getLon()
@@ -223,16 +254,16 @@ public class GeodeticCoordinate implements Serializable, Cloneable {
 	            	    + coord.getLon()
 	            	    + " ].  Longitude must be greater than -180."); 
 	        }
-	        if (coord.getLat() > 89) {
+	        if (coord.getLat() > 90) {
 	            throw new IllegalStateException(
 	            		"Invalid latitude value => [ " 
-	            	    + coord.getLon()
+	            	    + coord.getLat()
 	            	    + " ].  Latitude must be less than 90."); 
 	        }
 	        if (coord.getLat() < -90) {
 	            throw new IllegalStateException(
 	            		"Invalid latitude value => [ " 
-	            	    + coord.getLon()
+	            	    + coord.getLat()
 	            	    + " ].  Latitude must be greater than -90."); 
 	        }
 		}
