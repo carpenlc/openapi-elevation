@@ -154,8 +154,8 @@ public class ElevationExtremesFactory implements Constants {
      */
 	public MinMaxElevation getMinMaxElevation() {
 		
-		int       minElevation    = 32767;
-		int       maxElevation    = -32767;
+		int       minElevation    = MAX_ELEVATION;
+		int       maxElevation    = INVALID_ELEVATION_VALUE;
 		int       postCounter     = 0;
 		long      startTime       = System.currentTimeMillis();
 		double    maxElevationLat = 0.0;
