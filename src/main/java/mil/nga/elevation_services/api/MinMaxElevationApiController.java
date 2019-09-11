@@ -49,7 +49,11 @@ public class MinMaxElevationApiController implements MinMaxElevationApi {
     }
 
     /**
+     * Method manually added to generated stub providing the response 
+     * associated with calls to the <code>MinMaxElevation<code> end point when 
+     * called with an HTTP POST.  
      * 
+     * @param minMaxElevationQuery Deserialized query parameters.
      */
     public ResponseEntity<Object> getElevationAtPOST(
     		MinMaxElevationQuery minMaxElevationQuery) {
