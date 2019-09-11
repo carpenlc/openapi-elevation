@@ -1,4 +1,4 @@
-# OpenAPI generated server
+# elevation_services - OpenAPI generated server
 
 Spring Boot Server 
 
@@ -21,17 +21,15 @@ Change default port value in application.properties# openapi-elevation
 
 wget http://central.maven.org/maven2/org/openapitools/openapi-generator-cli/4.1.0/openapi-generator-cli-4.1.0.jar -O openapi-generator-cli.jar
 
- java -jar /export/home/carpenlc/openapi/openapi-generator/modules/openapi-generator-cli/target/openapi-generator-cli.jar generate --generator-name spring -i ./src/main/resources/elevation_services.yaml --invoker-package mil.nga.elevation_services --model-package mil.nga.elevation_services.model --api-package  mil.nga.elevation_services.api -o /export/home/carpenlc/java/openapi-generated
-
-java -jar /opt/openapi-generator/openapi-generator-cli.jar \
-  generate \
+```
+# java -jar /export/home/carpenlc/openapi/openapi-generator/modules/openapi-generator-cli/target/openapi-generator-cli.jar generate \
   --generator-name spring \
-  -i /home/carpenlc/projects/elevation_services/openapi-spring/src/main/respources/elevation_services.yaml \
+  -i ./src/main/resources/elevation_services.yaml \
   --invoker-package mil.nga.elevation_services \
   --model-package mil.nga.elevation_services.model \
-  --api-package mil.nga.elevation_services.api \
-  -o /home/carpenlc/projects/elevation_services/generated 
-  
+  --api-package  mil.nga.elevation_services.api \
+  -o /export/home/carpenlc/java/openapi-generated
+```
   
 The current production environment runs with an Oracle back-end.  Oracle does not make it easy to utilize their JDBC drivers with Maven.  As such run the following 
 command to load the Oracle JDBC drivers into the local Git repository:
