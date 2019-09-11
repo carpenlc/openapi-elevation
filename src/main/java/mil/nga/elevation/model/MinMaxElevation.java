@@ -9,7 +9,7 @@ import java.io.Serializable;
  * 
  * @author L. Craig Carpenter 
  */
-public class MinMaxElevation implements Serializable {
+public class MinMaxElevation implements Serializable, Cloneable {
 
 	/**
 	 * Eclipse-generated serialVersionUID

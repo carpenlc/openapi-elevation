@@ -16,7 +16,7 @@ import mil.nga.elevation_services.model.HeightUnitType;
  * 
  * @author L. Craig Carpenter
  */
-public class DEMFrameAccuracy implements Serializable, Constants {
+public class DEMFrameAccuracy implements Serializable, Cloneable, Constants {
 
 	/**
 	 * Eclipse-generated serialVersionUID
@@ -84,6 +84,19 @@ public class DEMFrameAccuracy implements Serializable, Constants {
  	 */
  	public HeightUnitType getUnits() {
  		return units;
+ 	}
+ 	
+ 	/**
+ 	 * Perform a deep clone of the object.
+ 	 */
+ 	public DEMFrameAccuracy clone() {
+ 		return new DEMFrameAccuracy.DEMFrameAccuracyBuilder()
+ 				.absHorzAccuracy(getAbsHorzAccuracy())
+ 				.absVertAccuracy(getAbsVertAccuracy())
+ 				.relHorzAccuracy(getRelHorzAccuracy())
+ 				.relVertAccuracy(getRelVertAccuracy())
+ 				.units(getUnits())
+ 				.build();
  	}
  	
  	/**

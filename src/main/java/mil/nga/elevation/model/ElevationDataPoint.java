@@ -6,7 +6,7 @@ import mil.nga.elevation.Constants;
 import mil.nga.elevation_services.model.HeightUnitType;
 import mil.nga.elevation_services.model.TerrainDataFileType;
 
-public class ElevationDataPoint implements Serializable, Constants {
+public class ElevationDataPoint implements Serializable, Cloneable, Constants {
 
 	/**
 	 * Eclipse-generated serialVersionUID
@@ -100,6 +100,20 @@ public class ElevationDataPoint implements Serializable, Constants {
 	 */
 	public HeightUnitType getUnits() {
 		return units;
+	}
+	
+	/**
+	 * Perform a deep clone of the object.
+	 */
+	public ElevationDataPoint clone() {
+		return new ElevationDataPoint.ElevationDataPointBuilder()
+				.classificationMarking(getClassificationMarking())
+				.elevation(getElevation())
+				.source(getSource())
+				.withGeodeticCoordinate(getGeodeticCoordinate().clone())
+				.withDEMFrameAccuracy(getAccuracy().clone())
+				.units(getUnits())
+				.build();
 	}
 	
 	/**

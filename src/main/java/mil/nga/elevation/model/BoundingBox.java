@@ -15,7 +15,7 @@ import mil.nga.ErrorMessageType;
  * 
  * @author L. Craig Carpenter
  */
-public class BoundingBox implements Serializable {
+public class BoundingBox implements Serializable, Cloneable {
 
 	/**
 	 * Eclipse-generated serialVersionUID
@@ -99,6 +99,18 @@ public class BoundingBox implements Serializable {
 	 */
 	public double getUpperLeftLon() {
 		return lowerLeft.getLon();
+	}
+	
+	/**
+	 * Perform a deep clone of the object.
+	 */
+	public BoundingBox clone() {
+		return new BoundingBox.BoundingBoxBuilder()
+				.lowerLeftLat(getLowerLeftLat())
+				.lowerLeftLon(getLowerLeftLon())
+				.upperRightLat(getUpperRightLat())
+				.upperRightLon(getUpperRightLon())
+				.build();
 	}
 	
 	/**

@@ -12,7 +12,7 @@ import mil.nga.ErrorMessageType;
  * 
  * @author L. Craig Carpenter
  */
-public class GeodeticCoordinate implements Serializable {
+public class GeodeticCoordinate implements Serializable, Cloneable {
 
 	/**
 	 * Eclipse-generated serialVersionUID
@@ -50,6 +50,7 @@ public class GeodeticCoordinate implements Serializable {
 	public String getLatStr() {
 		return latStr;
 	}
+	
 	/**
 	 * Getter method for the longitude value.
 	 * @return The longitude value of the geodetic coordinate.
@@ -64,6 +65,16 @@ public class GeodeticCoordinate implements Serializable {
 	 */
 	public String getLonStr() {
 		return lonStr;
+	}
+	
+	/**
+	 * Perform a deep clone of the object.
+	 */
+	public GeodeticCoordinate clone() {
+		return new GeodeticCoordinate.GeodeticCoordinateBuilder()
+				.lat(getLat())
+				.lon(getLon())
+				.build();
 	}
 	
 	/**
