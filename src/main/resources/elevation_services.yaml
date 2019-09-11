@@ -8,7 +8,19 @@ info:
   license:
     name: MIT
 servers:
-  - url: http://localhost/elevation/v1
+  - url: '{protocol}://{fqdn}/elevation/v1'
+    variables:
+      protocol:
+        enum:
+          - http
+          - https
+        default: https
+      fqdn:
+        enum:
+          - localhost
+          - dload.geo.nga.mil
+          - websvcs.elevation.geo.nga.mil 
+        default: localhost
 paths:
   /isAlive:
     get:
