@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 import mil.nga.elevation.Constants;
 import mil.nga.elevation.ElevationExtremesFactory;
+import mil.nga.elevation.ErrorCodes;
 import mil.nga.elevation.dao.TerrainDataFile;
 import mil.nga.elevation.exceptions.ApplicationException;
 import mil.nga.elevation.model.BoundingBox;
@@ -20,6 +21,7 @@ import mil.nga.elevation_services.model.HeightUnitType;
 import mil.nga.elevation_services.model.MinMaxElevationQuery;
 import mil.nga.elevation_services.model.MinMaxElevationResponse;
 import mil.nga.elevation_services.model.MinMaxElevationType;
+import mil.nga.elevation_services.model.SecurityType;
 import mil.nga.elevation_services.model.TerrainDataFileType;
 
 /**
@@ -53,7 +55,7 @@ public class ElevationExtremesService implements Constants {
 	 * @return An object to return to the caller.
 	 */
 	private MinMaxElevationResponse convertToResponse(MinMaxElevation minMax) {
-		
+	
 		CoordinateTypeDouble    minCoordinate = new CoordinateTypeDouble();
 		CoordinateTypeDouble    maxCoordinate = new CoordinateTypeDouble();
 		MinMaxElevationType     minElevation  = new MinMaxElevationType();
@@ -61,31 +63,63 @@ public class ElevationExtremesService implements Constants {
 		MinMaxElevationResponse response      = new MinMaxElevationResponse();
 		
 		// Set the min elevation data
-		minCoordinate.setLat(minMax.getMinElevation().getGeodeticCoordinate().getLat());
-		minCoordinate.setLon(minMax.getMinElevation().getGeodeticCoordinate().getLon());
+		minCoordinate.setLat(
+				minMax.getMinElevation().getGeodeticCoordinate().getLat());
+		minCoordinate.setLon(
+				minMax.getMinElevation().getGeodeticCoordinate().getLon());
 		minElevation.setCoordinate(minCoordinate);
-		minElevation.setAbsHorizontalAccuracy(minMax.getMinElevation().getAccuracy().getAbsHorzAccuracy());
-		minElevation.setAbsVerticalAccuracy(minMax.getMinElevation().getAccuracy().getAbsVertAccuracy());
-		minElevation.setRelHorizontalAccuracy(minMax.getMinElevation().getAccuracy().getRelHorzAccuracy());
-		minElevation.setRelVerticalAccuracy(minMax.getMinElevation().getAccuracy().getRelVertAccuracy());
-		minElevation.setElevation(minMax.getMinElevation().getElevation());
-		minElevation.setSource(minMax.getMinElevation().getSource());
+		minElevation.setAbsHorizontalAccuracy(
+				minMax.getMinElevation().getAccuracy().getAbsHorzAccuracy());
+		minElevation.setAbsVerticalAccuracy(
+				minMax.getMinElevation().getAccuracy().getAbsVertAccuracy());
+		minElevation.setRelHorizontalAccuracy(
+				minMax.getMinElevation().getAccuracy().getRelHorzAccuracy());
+		minElevation.setRelVerticalAccuracy(
+				minMax.getMinElevation().getAccuracy().getRelVertAccuracy());
+		minElevation.setElevation(
+				minMax.getMinElevation().getElevation());
+		minElevation.setSource(
+				minMax.getMinElevation().getSource());
 		
 		// Set the maximum elevation data
-		maxCoordinate.setLat(minMax.getMaxElevation().getGeodeticCoordinate().getLat());
-		maxCoordinate.setLon(minMax.getMaxElevation().getGeodeticCoordinate().getLon());
+		maxCoordinate.setLat(
+				minMax.getMaxElevation().getGeodeticCoordinate().getLat());
+		maxCoordinate.setLon(
+				minMax.getMaxElevation().getGeodeticCoordinate().getLon());
 		maxElevation.setCoordinate(maxCoordinate);
-		maxElevation.setAbsHorizontalAccuracy(minMax.getMaxElevation().getAccuracy().getAbsHorzAccuracy());
-		maxElevation.setAbsVerticalAccuracy(minMax.getMaxElevation().getAccuracy().getAbsVertAccuracy());
-		maxElevation.setRelHorizontalAccuracy(minMax.getMaxElevation().getAccuracy().getRelHorzAccuracy());
-		maxElevation.setRelVerticalAccuracy(minMax.getMaxElevation().getAccuracy().getRelVertAccuracy());
-		maxElevation.setElevation(minMax.getMaxElevation().getElevation());
-		maxElevation.setSource(minMax.getMaxElevation().getSource());
+		maxElevation.setAbsHorizontalAccuracy(
+				minMax.getMaxElevation().getAccuracy().getAbsHorzAccuracy());
+		maxElevation.setAbsVerticalAccuracy(
+				minMax.getMaxElevation().getAccuracy().getAbsVertAccuracy());
+		maxElevation.setRelHorizontalAccuracy(
+				minMax.getMaxElevation().getAccuracy().getRelHorzAccuracy());
+		maxElevation.setRelVerticalAccuracy(
+				minMax.getMaxElevation().getAccuracy().getRelVertAccuracy());
+		maxElevation.setElevation(
+				minMax.getMaxElevation().getElevation());
+		maxElevation.setSource(
+				minMax.getMaxElevation().getSource());
 		
 		// Set the response data
 		response.setMinElevation(minElevation);
 		response.setMaxElevation(maxElevation);
 		response.setHeightType(minMax.getMaxElevation().getUnits());
+		
+		// Set up the overall security information
+		SecurityType security = new SecurityType();
+		if ((minMax.getMaxElevation().getClassificationMarking() != null) && 
+				(!minMax.getMaxElevation().getClassificationMarking().isEmpty())) { 
+			security.setClassification(minMax.getMaxElevation().getClassificationMarking());
+		}
+		else if ((minMax.getMinElevation().getClassificationMarking() != null) && 
+				(!minMax.getMinElevation().getClassificationMarking().isEmpty())) {
+			security.setClassification(minMax.getMinElevation().getClassificationMarking());
+		}
+		else {
+			security.setClassification(Constants.DEFAULT_CLASSIFICATION_MARKING);
+		}
+		security.setOwnerProducer(Constants.DEFAULT_PRODUCER);
+		response.setSecurity(security);
 		return response;
 		
 	}
@@ -174,6 +208,8 @@ public class ElevationExtremesService implements Constants {
     		String units,
     		String source) throws ApplicationException {
 		
+		// If there are any issues with the input coordinates an 
+		// ApplicationException will be thrown by the following call.
 		BoundingBox bbox = new BoundingBox.BoundingBoxBuilder()
 				.lowerLeftLat(lllat)
 				.lowerLeftLon(lllon)
@@ -197,18 +233,22 @@ public class ElevationExtremesService implements Constants {
 	 * @throws ApplicationException Thrown for all known issues.
 	 */
 	public MinMaxElevationResponse getMinMaxElevation(
-			MinMaxElevationQuery query) 
-					throws ApplicationException {
-		
-		BoundingBox bbox = new BoundingBox.BoundingBoxBuilder()
-				.lowerLeftLat(query.getBbox().getLllat())
-				.lowerLeftLon(query.getBbox().getLllon())
-				.upperRightLat(query.getBbox().getUrlat())
-				.upperRightLon(query.getBbox().getUrlon())
+			MinMaxElevationQuery query) throws ApplicationException {
+		if ((query != null) && (query.getBbox() != null)) {  
+			BoundingBox bbox = new BoundingBox.BoundingBoxBuilder()
+					.lowerLeftLat(query.getBbox().getLllat())
+					.lowerLeftLon(query.getBbox().getLllon())
+					.upperRightLat(query.getBbox().getUrlat())
+					.upperRightLon(query.getBbox().getUrlon())
+					.build();
+			return getMinMaxElevation(bbox, query.getHeightType(), query.getSource());
+		}
+		else {
+			throw new ApplicationException.ApplicationExceptionBuilder()
+				.errorCode(ErrorCodes.INVALID_QUERY.getErrorCode())
+				.errorMessage(ErrorCodes.INVALID_QUERY.getErrorMessage())
 				.build();
-				
-		return getMinMaxElevation(bbox, query.getHeightType(), query.getSource());
-		
+		}
 	}
 	
 	/**
@@ -225,8 +265,8 @@ public class ElevationExtremesService implements Constants {
 	 * @throws ApplicationException
 	 */
 	public MinMaxElevationResponse getMinMaxElevation(
-			BoundingBox bbox,
-			HeightUnitType units,
+			BoundingBox         bbox,
+			HeightUnitType      units,
 			TerrainDataFileType source) throws ApplicationException {
 		
 		MinMaxElevation minMax = null;
@@ -244,21 +284,36 @@ public class ElevationExtremesService implements Constants {
         while (lat < maxCellLat) {
         	int lon = minCellLon;
         	while (lon < maxCellLon) {
-        		//if (LOGGER.isDebugEnabled()) {
-        			LOGGER.info("Processing lat [ " + lat + " ], lon [ " + lon + " ].");
-        		//}
+        		if (LOGGER.isDebugEnabled()) {
+        			LOGGER.debug("Processing lat [ " + lat + " ], lon [ " + lon + " ].");
+        		}
         		List<TerrainDataFile> files = repository.getTerrainDataFiles(lat, lon, source);
         		if ((files != null) && (files.size() > 0)) {
         			for (TerrainDataFile file : files) {
-        				ElevationExtremesFactory factory = 
-        						new ElevationExtremesFactory.ElevationExtremesFactoryBuilder()
-        							.classificationMarking(file.getMarking())
-        							.filePath(file.getUnixPath())
-        							.units(units)
-        							.sourceType(source)
-        							.build();
-        				MinMaxElevation tmpMinMax = factory.getMinMaxElevation(bbox);
-            			minMax = compare(minMax, tmpMinMax);
+        				try {
+	        				ElevationExtremesFactory factory = 
+	        						new ElevationExtremesFactory.ElevationExtremesFactoryBuilder()
+	        							.classificationMarking(file.getMarking())
+	        							.filePath(file.getUnixPath())
+	        							.units(units)
+	        							.sourceType(ConversionUtils.convertTerrainDataFileType(file.getSource()))
+	        							.build();
+	        				MinMaxElevation tmpMinMax = factory.getMinMaxElevation(bbox);
+	            			minMax = compare(minMax, tmpMinMax);
+        				}
+        				catch (IllegalStateException ise) {
+        					// We found that it is not uncommon for the 
+        					// database to be out of sync with the filesystem.
+        					// Rather than propagate the exception all the 
+        					// back to the REST interface, catch it here so 
+        					// processing can continue. 
+        					LOGGER.warn("Unexpected IllegalStateException "
+        							+ "raised while processing DEM data record [ "
+        							+ file.toString()
+        							+ " ].  Error message => [ "
+        							+ ise.getMessage()
+        							+ " ].");
+        				}
         			}
         		}
         		else {

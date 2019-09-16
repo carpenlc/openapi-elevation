@@ -38,6 +38,15 @@ public class TerrainDataFileService {
 	@Autowired
 	TerrainDataFileDAO repository;
 
+	/**
+	 * Interface for clients to retrieve all records from the target data
+	 * source.
+	 * @return A list of all records in the target data source.
+	 */
+	public List<TerrainDataFile> findAll() {
+		return repository.findAll();
+	}
+	
     /**
      * Convenience method used to obtain a list of DEMs that will provide a 
      * list of terrain data files that will provide the coverage for the 

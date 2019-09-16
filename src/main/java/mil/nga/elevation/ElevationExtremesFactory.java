@@ -510,6 +510,7 @@ public class ElevationExtremesFactory implements Constants {
 										.elevation(maxElevation)
 										.classificationMarking(getClassificationMarking())
 										.units(getUnits())
+										.source(getSourceType())
 										.withDEMFrameAccuracy(accuracy)
 										.withGeodeticCoordinate(
 												new GeodeticCoordinate.GeodeticCoordinateBuilder()
@@ -522,6 +523,7 @@ public class ElevationExtremesFactory implements Constants {
 									.elevation(minElevation)
 									.classificationMarking(getClassificationMarking())
 									.units(getUnits())
+									.source(getSourceType())
 									.withDEMFrameAccuracy(accuracy)
 									.withGeodeticCoordinate(
 											new GeodeticCoordinate.GeodeticCoordinateBuilder()

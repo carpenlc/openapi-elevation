@@ -81,10 +81,14 @@ public class ElevationDataService {
 			}
 
 			responseElevation.setCoordinate(coord);
-			responseElevation.setAbsHorizontalAccuracy(point.getAccuracy().getAbsHorzAccuracy());
-			responseElevation.setAbsVerticalAccuracy(point.getAccuracy().getAbsVertAccuracy());
-			responseElevation.setRelHorizontalAccuracy(point.getAccuracy().getRelHorzAccuracy());
-			responseElevation.setRelVerticalAccuracy(point.getAccuracy().getRelVertAccuracy());
+			responseElevation.setAbsHorizontalAccuracy(
+					point.getAccuracy().getAbsHorzAccuracy());
+			responseElevation.setAbsVerticalAccuracy(
+					point.getAccuracy().getAbsVertAccuracy());
+			responseElevation.setRelHorizontalAccuracy(
+					point.getAccuracy().getRelHorzAccuracy());
+			responseElevation.setRelVerticalAccuracy(
+					point.getAccuracy().getRelVertAccuracy());
 			
 			responseElevation.setSource(point.getSource());
 			response.addElevationsItem(responseElevation);

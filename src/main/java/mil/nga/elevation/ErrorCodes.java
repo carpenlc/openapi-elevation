@@ -6,11 +6,13 @@ public enum ErrorCodes {
 	INVALID_QUERY_NO_LAT(-1006, "Invalid input query.  Latitude not defined."),
 	INVALID_QUERY_NO_LON(-1007, "Invalid input query.  Longitude not defined."),
 	INVALID_QUERY_NO_COORDINATES(-1008, "Invalid input query.  Array of coordinates not supplied."),
-	INVALID_UNITS(-1010, "Invalid height units.  Application supports FEET, METERS."),
-	INVALID_SOURCE_TYPE(-1010, "Invalid source DEM specified"),
-	INVALID_INPUT_COORDINATES(-1015, "Invalid input coordinates."),
-	INVALID_NUMBER_OF_INPUT_COORDINATES(-1020, "Input coordinates must be coordinate pairs (odd number of points)"),
-	NO_SOURCE_AVAILABLE(-1030, "Unable to find any DEM sources for the requested coordinate."),
+	INVALID_QUERY_NO_WKT(-1009, "Invalid input query.  WKT string not supplied."),
+	INVALID_QUERY_INVALID_WKT(-1010, "Invalid input query.  WKT string not is invalid."),
+	INVALID_UNITS(-1015, "Invalid height units.  Application supports FEET, METERS."),
+	INVALID_SOURCE_TYPE(-1020, "Invalid source DEM specified"),
+	INVALID_INPUT_COORDINATES(-1025, "Invalid input coordinates."),
+	INVALID_NUMBER_OF_INPUT_COORDINATES(-1030, "Input coordinates must be coordinate pairs (odd number of points)"),
+	NO_SOURCE_AVAILABLE(-1035, "Unable to find any DEM sources for the requested coordinate."),
 	INTERNAL_EXCEPTION(-1100, "Unexpected internal exception.  See logs for more information.");
 	
 	// Internal member objects holding the error code and message
