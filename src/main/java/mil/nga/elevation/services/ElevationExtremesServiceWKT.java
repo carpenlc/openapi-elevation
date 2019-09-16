@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import mil.nga.elevation.ErrorCodes;
 import mil.nga.elevation.exceptions.ApplicationException;
 import mil.nga.elevation.model.BoundingBox;
+import mil.nga.elevation.utils.ConversionUtils;
 import mil.nga.elevation_services.model.HeightUnitType;
 import mil.nga.elevation_services.model.MinMaxElevationQueryWKT;
 import mil.nga.elevation_services.model.MinMaxElevationResponse;
@@ -41,7 +42,18 @@ public class ElevationExtremesServiceWKT extends ElevationExtremesService {
 	@Autowired
 	TerrainDataFileService repository;
 	
+	/**
+	 * Method used to convert the input WKT String into a bounding box for 
+	 * further processing.  The bounding box is generated from the envelope 
+	 * of the polygon constructed from the WKT string.
+	 * 
+	 * @param wkt User-supplied WKT String.
+	 * @return A bounding box constructed from the envelope of the 
+	 * @throws ApplicationException Thrown in a variety of failure cases 
+	 * converting the WKT.
+	 */
 	public BoundingBox getBoundingBox(String wkt) throws ApplicationException {
+		
 		BoundingBox.BoundingBoxBuilder builder = 
 				new BoundingBox.BoundingBoxBuilder();
 		
@@ -118,8 +130,8 @@ public class ElevationExtremesServiceWKT extends ElevationExtremesService {
 		if ((query != null) && 
 				(query.getWkt() != null) && 
 				(!query.getWkt().isEmpty())) {  
-			return getMinMaxElevation(
-					query.getWkt(), 
+			return this.getMinMaxElevation(
+					getBoundingBox(query.getWkt()), 
 					query.getHeightType(), 
 					query.getSource());
 		}
@@ -129,6 +141,34 @@ public class ElevationExtremesServiceWKT extends ElevationExtremesService {
 				.errorMessage(ErrorCodes.INVALID_QUERY.getErrorMessage())
 				.build();
 		}
+	}
+	
+	/**
+	 * Convenience method used to convert the user-supplied parameters
+	 * from the HTTP GET call to the <code>MinMaxElevationWKT</code> 
+	 * end point into a format expected by the ElevationExtremesFactory 
+	 * class.
+	 * 
+	 * @param wkt The "well-known" text String.
+	 * @param units The output units for the elevation values. 
+	 * @param source The source DEM type.
+	 * @return Response object to be serialized and sent to the caller.
+	 * @throws ApplicationException
+	 */
+	public MinMaxElevationResponse getMinMaxElevation(
+			String wkt,
+			String unitsStr,
+			String sourceStr) throws ApplicationException {
+		
+		HeightUnitType      units = 
+				ConversionUtils.convertHeightUnitType(unitsStr);
+		TerrainDataFileType source = 
+				ConversionUtils.convertTerrainDataFileType(sourceStr);
+		
+		return this.getMinMaxElevation(
+				getBoundingBox(wkt), 
+				units, 
+				source);
 	}
 	
 	/**
@@ -147,15 +187,15 @@ public class ElevationExtremesServiceWKT extends ElevationExtremesService {
 	 * @param units The output units for the elevation values. 
 	 * @param source The source DEM type.
 	 * @return Response object to be serialized and sent to the caller.
-	 * @throws ApplicationException
+	 * @throws ApplicationException Thrown in conjunction with a variety of 
+	 * known failure cases.
 	 */
 	public MinMaxElevationResponse getMinMaxElevation(
-			String              wkt,
+			BoundingBox         bbox,
 			HeightUnitType      units,
 			TerrainDataFileType source) throws ApplicationException {
-		
-		return getMinMaxElevation(
-				getBoundingBox(wkt), 
+		return super.getMinMaxElevation(
+				bbox, 
 				units, 
 				source);
 	}

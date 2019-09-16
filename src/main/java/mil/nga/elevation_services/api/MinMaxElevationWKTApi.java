@@ -46,7 +46,7 @@ public interface MinMaxElevationWKTApi {
         produces = { "application/json" }, 
         consumes = { "application/json" },
         method = RequestMethod.POST)
-    default ResponseEntity<MinMaxElevationResponse> getElevationAtWKTPOST(@ApiParam(value = "A well known text" ,required=true )  @Valid @RequestBody MinMaxElevationQueryWKT minMaxElevationQueryWKT) {
+    default ResponseEntity<Object> getElevationAtWKTPOST(@ApiParam(value = "A well known text" ,required=true )  @Valid @RequestBody MinMaxElevationQueryWKT minMaxElevationQueryWKT) {
         getRequest().ifPresent(request -> {
             for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
                 if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
@@ -67,7 +67,7 @@ public interface MinMaxElevationWKTApi {
     @RequestMapping(value = "/MinMaxElevationWKT",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
-    default ResponseEntity<MinMaxElevationResponse> getMinMaxElevationAtWKTGET(@NotNull @Size(min=4,max=4) @ApiParam(value = "A well known text String.", required = true) @Valid @RequestParam(value = "wkt", required = true) List<String> wkt,@ApiParam(value = "The output units for the elevation height data.", allowableValues = "FEET, METERS", defaultValue = "METERS") @Valid @RequestParam(value = "heightType", required = false, defaultValue="METERS") String heightType,@ApiParam(value = "The source DEM type to use for calculating the elevation height data.", allowableValues = "DTED2, DTED1, DTED0, SRTM2, SRTM1, SRTM2F, SRTM1F, BEST", defaultValue = "DTED0") @Valid @RequestParam(value = "source", required = false, defaultValue="DTED0") String source,@ApiParam(value = "This parameter is no longer used.") @Valid @RequestParam(value = "operation", required = false) String operation) {
+    default ResponseEntity<Object> getMinMaxElevationAtWKTGET(@NotNull @Size(min=4,max=4) @ApiParam(value = "A well known text String.", required = true) @Valid @RequestParam(value = "wkt", required = true) List<String> wkt,@ApiParam(value = "The output units for the elevation height data.", allowableValues = "FEET, METERS", defaultValue = "METERS") @Valid @RequestParam(value = "heightType", required = false, defaultValue="METERS") String heightType,@ApiParam(value = "The source DEM type to use for calculating the elevation height data.", allowableValues = "DTED2, DTED1, DTED0, SRTM2, SRTM1, SRTM2F, SRTM1F, BEST", defaultValue = "DTED0") @Valid @RequestParam(value = "source", required = false, defaultValue="DTED0") String source,@ApiParam(value = "This parameter is no longer used.") @Valid @RequestParam(value = "operation", required = false) String operation) {
         getRequest().ifPresent(request -> {
             for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
                 if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {

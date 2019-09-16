@@ -115,7 +115,6 @@ public class MinMaxElevationApiController implements MinMaxElevationApi {
     		String source,
     		String operation) {
 
-    	
     	String                  arguments = 
     			ConversionUtils.toString(lllon, lllat, urlon, urlat, heightType, source);
     	long                    start     = System.currentTimeMillis();

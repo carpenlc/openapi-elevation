@@ -14,6 +14,7 @@ import mil.nga.elevation_services.model.CoordinateTypeArray;
 import mil.nga.elevation_services.model.ElevationQuery;
 import mil.nga.elevation_services.model.HeightUnitType;
 import mil.nga.elevation_services.model.MinMaxElevationQuery;
+import mil.nga.elevation_services.model.MinMaxElevationQueryWKT;
 import mil.nga.elevation_services.model.TerrainDataFileType;
 
 /**
@@ -344,6 +345,32 @@ public class ConversionUtils {
 					sb.append(", ");
 				}
 			}
+		}
+		return sb.toString();
+	}
+	
+	/**
+	 * This method is used to generate a String-based message from the 
+	 * parameters that were submitted as part of an HTTP POST call to the 
+	 * <code>MinMaxElevationQueryWKT</code> end-point.  This is only used 
+	 * for logging purposes. 
+	 * 
+	 * @param query The user-submitted elevation min/max query.
+	 * @return A concatenated String of the input function arguments.
+	 */
+	public static String toString(MinMaxElevationQueryWKT query) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("WKT [ ");
+		if (query.getWkt() != null) {
+			sb.append(query.getWkt());
+		}
+		sb.append(" ], Units [ ");
+		if (query.getHeightType() != null) {
+			sb.append(query.getHeightType().toString());
+		}
+		sb.append(" ], Source DEM [ ");
+		if (query.getSource() != null) {
+			sb.append(query.getSource().toString());
 		}
 		return sb.toString();
 	}
