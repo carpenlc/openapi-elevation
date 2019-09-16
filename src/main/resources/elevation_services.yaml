@@ -298,11 +298,7 @@ paths:
           description: A well known text String.
           required: true
           schema:
-            type: array
-            items:
-              type: string
-            minItems: 4
-            maxItems: 4
+            type: string
         - in: query
           name: operation
           description: This parameter is no longer used.
