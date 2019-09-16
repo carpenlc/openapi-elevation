@@ -227,4 +227,25 @@ public class TerrainDataFile implements Serializable {
 		sb.append(" ].");
 		return sb.toString();
 	}
+	
+	/**
+	 * Convert the object to a CSV record.
+	 */
+	public String toCSV() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(getSource());
+		sb.append(",");
+		sb.append(getLat());
+		sb.append(",");
+		sb.append(getLon());
+		sb.append(",");
+		sb.append(getWindowsPath());
+		sb.append(",");
+		sb.append(getUnixPath());
+		sb.append(",");
+		sb.append(getQuality());
+		sb.append(",");
+		sb.append(getMarking());
+		return sb.toString();
+	}
 }
