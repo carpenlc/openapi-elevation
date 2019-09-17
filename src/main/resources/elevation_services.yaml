@@ -168,7 +168,7 @@ paths:
   /MinMaxElevation:
     get:
       summary: Determine the minium and maximum elevation height values within a particular bounding box.
-      operationId: "getMinMaxElevationAtGET"
+      operationId: "getMinMaxElevationGET"
       parameters:
         - in: query
           name: heightType
@@ -241,7 +241,7 @@ paths:
                 $ref: "#/components/schemas/Error"
     post:
       summary: Determine the minium and maximum elevation height values within a particular bounding box.
-      operationId: "getElevationAtPOST"
+      operationId: "getMinMaxElevationPOST"
       requestBody:
         description: Client specified bounding box.  The coordinates can be specified in either DMS format or decimal degrees.
         required: true
@@ -265,7 +265,7 @@ paths:
   /MinMaxElevationWKT:
     get:
       summary: Determine the minium and maximum elevation height values within an area defined by a well known text (WKT) String.
-      operationId: "getMinMaxElevationAtWKTGET"
+      operationId: "getMinMaxElevationWKTGET"
       parameters:
         - in: query
           name: heightType
@@ -320,7 +320,7 @@ paths:
                 $ref: "#/components/schemas/Error"
     post:
       summary: Determine the minium and maximum elevation height values within an area defined by a well known text (WKT) String.
-      operationId: "getElevationAtWKTPOST"
+      operationId: "getMinMaxElevationWKTPOST"
       requestBody:
         description: A well known text
         required: true
