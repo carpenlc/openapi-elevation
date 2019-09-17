@@ -28,7 +28,7 @@ import mil.nga.elevation_services.model.TerrainDataFileType;
  * @author L. Craig Carpenter
  */
 @Component
-public class ElevationExtremesServiceWKT extends ElevationExtremesService {
+public class ElevationExtremesServiceWKT {
 
     /**
      * Set up the Logback system for use throughout the class.
@@ -41,6 +41,9 @@ public class ElevationExtremesServiceWKT extends ElevationExtremesService {
      */
 	@Autowired
 	TerrainDataFileService repository;
+	
+	@Autowired
+	ElevationExtremesService elevationService;
 	
 	/**
 	 * Method used to convert the input WKT String into a bounding box for 
@@ -120,17 +123,17 @@ public class ElevationExtremesServiceWKT extends ElevationExtremesService {
 	 * end point into a format expected by the ElevationExtremesFactory 
 	 * class.
 	 *  
-	 * @param query Deserialized query object.
+	 * @param query De-serialized query object.
 	 * @return Response object to be serialized and sent to the caller.
 	 * @throws ApplicationException Thrown for all known issues.
 	 */
-	public MinMaxElevationResponse getMinMaxElevation(
+	public MinMaxElevationResponse getMinMaxElevationWKT(
 			MinMaxElevationQueryWKT query) 
 					throws ApplicationException {
 		if ((query != null) && 
 				(query.getWkt() != null) && 
 				(!query.getWkt().isEmpty())) {  
-			return this.getMinMaxElevation(
+			return elevationService.getMinMaxElevation(
 					getBoundingBox(query.getWkt()), 
 					query.getHeightType(), 
 					query.getSource());
@@ -155,7 +158,7 @@ public class ElevationExtremesServiceWKT extends ElevationExtremesService {
 	 * @return Response object to be serialized and sent to the caller.
 	 * @throws ApplicationException
 	 */
-	public MinMaxElevationResponse getMinMaxElevation(
+	public MinMaxElevationResponse getMinMaxElevationWKT(
 			String wkt,
 			String unitsStr,
 			String sourceStr) throws ApplicationException {
@@ -165,7 +168,7 @@ public class ElevationExtremesServiceWKT extends ElevationExtremesService {
 		TerrainDataFileType source = 
 				ConversionUtils.convertTerrainDataFileType(sourceStr);
 		
-		return this.getMinMaxElevation(
+		return elevationService.getMinMaxElevation(
 				getBoundingBox(wkt), 
 				units, 
 				source);
@@ -190,13 +193,13 @@ public class ElevationExtremesServiceWKT extends ElevationExtremesService {
 	 * @throws ApplicationException Thrown in conjunction with a variety of 
 	 * known failure cases.
 	 */
-	public MinMaxElevationResponse getMinMaxElevation(
-			BoundingBox         bbox,
-			HeightUnitType      units,
-			TerrainDataFileType source) throws ApplicationException {
-		return super.getMinMaxElevation(
-				bbox, 
-				units, 
-				source);
-	}
+	//public MinMaxElevationResponse getMinMaxElevation(
+	//		BoundingBox         bbox,
+	//		HeightUnitType      units,
+	//		TerrainDataFileType source) throws ApplicationException {
+	//	return elevationService.getMinMaxElevation(
+	//			bbox, 
+	//			units, 
+	//			source);
+	//}
 }

@@ -271,6 +271,10 @@ public class ElevationExtremesService implements Constants {
 		
 		MinMaxElevation minMax = null;
 		
+		LOGGER.info("Processing bounding box [ "
+				+ bbox.toString()
+				+ " ].");
+		
 		// Determine what frames intersect the incoming bounding box
         int minCellLat = Math.round((float) Math.floor(bbox.getLowerLeftLat()));
         int maxCellLat = Math.round((float) Math.ceil(bbox.getUpperLeftLat()));
@@ -329,6 +333,7 @@ public class ElevationExtremesService implements Constants {
         	}
         	lat += 1; // Increment the latitude counter
         }
+        
         return convertToResponse(minMax);
 	}
 }

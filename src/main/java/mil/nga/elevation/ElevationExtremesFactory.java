@@ -3,6 +3,8 @@ package mil.nga.elevation;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.locationtech.jts.algorithm.locate.SimplePointInAreaLocator;
 import org.locationtech.jts.geom.Coordinate;
@@ -143,6 +145,103 @@ public class ElevationExtremesFactory implements Constants {
     }
     
     /**
+     * 
+     * @param elevation
+     * @return
+     */
+    public List<?> getPointsWithElevation(int elevation) {
+		
+		double    currentLat      = 0.0;
+		double    currentLon      = 0.0;
+		long      startTime       = System.currentTimeMillis();
+		DTEDFrame       frame  = null;
+		List<ElevationDataPoint> response = new ArrayList<ElevationDataPoint>();
+		try {
+			if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug("Loading DEM frame file [ "
+						+ getFilePath()
+						+ " ].");
+			}
+			frame = new DTEDFrame(getFilePath());
+			if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug("DEM frame file [ "
+						+ getFilePath()
+						+ " ] loaded in [ "
+						+ (System.currentTimeMillis() - startTime)
+						+ " ] ms.");
+			}
+			
+			// Reset the time
+			startTime = System.currentTimeMillis();
+			
+			// The lat/lon post spacing allows us to calculate the lat/lon 
+			// position of each elevation post.
+			double latPostSpacing = frame.getOMGrid().getVerticalResolution();
+			double lonPostSpacing = frame.getOMGrid().getHorizontalResolution();
+			
+			BoundingBox frameBounds = new BoundingBox.BoundingBoxBuilder()
+					.lowerLeftLat(frame.getOMGrid().getLatitude())
+					.lowerLeftLon(frame.getOMGrid().getLongitude())
+					.upperRightLat(frame.getOMGrid().getLatitude()+1.0)
+					.upperRightLon(frame.getOMGrid().getLongitude()+1.0)
+					.build();
+			
+			// Retrieve the posts from the DEM frame as a 2D array of shorts
+			short[][] posts = frame.getElevations(
+					(float)frameBounds.getUpperLeftLat(),
+					(float)frameBounds.getUpperLeftLon(),
+					(float)frameBounds.getLowerRightLat(),
+					(float)frameBounds.getLowerRightLon());
+			
+			
+			if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug("Elevation posts loaded in [ "
+						+ (System.currentTimeMillis() - startTime)
+						+ " ] ms.");
+			}
+			
+			// Reset the time
+			startTime = System.currentTimeMillis();
+						
+			// Loop through the 2D array and look for the min/max
+			for (int lon_index=0; lon_index < posts.length; lon_index++) {
+				
+				currentLon = frameBounds.getLowerLeftLon() + 
+						(lon_index * lonPostSpacing);
+				
+				for (int lat_index=0; lat_index < posts[lon_index].length; lat_index++) {
+					currentLat = frameBounds.getLowerLeftLat() + 
+							(lat_index * latPostSpacing);
+					
+					if (posts[lon_index][lat_index] == elevation) {
+						ElevationDataPoint point = new ElevationDataPoint.ElevationDataPointBuilder()
+														.elevation(posts[lon_index][lat_index])
+														.withGeodeticCoordinate(
+																new GeodeticCoordinate.GeodeticCoordinateBuilder()
+																.lat(currentLat)
+																.lon(currentLon)
+																.build())
+														.build();
+						response.add(point);
+						
+					}
+
+				}
+			}
+			
+		}
+		finally {
+			if (frame != null) {
+				frame.close(true);
+			}
+		}
+		
+		for (ElevationDataPoint point : response) {
+			System.out.println(point.toString());
+		}
+		return response;
+    }
+    /**
      * This method will determine the minimum and maximum elevation points 
      * that fall within the DEM frame identified by the input file path.
      * 
@@ -162,8 +261,8 @@ public class ElevationExtremesFactory implements Constants {
 		double    maxElevationLon = 0.0;
 		double    minElevationLat = 0.0;
 		double    minElevationLon = 0.0;
-		double    currentLat      = 0;
-		double    currentLon      = 0;
+		double    currentLat      = 0.0;
+		double    currentLon      = 0.0;
 		
 		DTEDFrame       frame  = null;
 		MinMaxElevation result = null;
@@ -227,24 +326,24 @@ public class ElevationExtremesFactory implements Constants {
 			startTime = System.currentTimeMillis();
 						
 			// Loop through the 2D array and look for the min/max
-			for (int row=0; row < posts.length; row++) {
+			for (int lon_index=0; lon_index < posts.length; lon_index++) {
 				
-				currentLat = frameBounds.getLowerLeftLat() + 
-						(row * latPostSpacing);
+				currentLon = frameBounds.getLowerLeftLon() + 
+						(lon_index * lonPostSpacing);
 				
-				for (int column=0; column < posts[row].length; column++) {
-					currentLon = frameBounds.getLowerLeftLon() + 
-							(column * lonPostSpacing);
+				for (int lat_index=0; lat_index < posts[lon_index].length; lat_index++) {
+					currentLat = frameBounds.getLowerLeftLat() + 
+							(lat_index * latPostSpacing);
 					
 					postCounter++;
 					
 					// Check to see if the elevation is lower than the current
 					// max elevation.
-					if ((posts[row][column] < (short)minElevation) && 
-							(posts[row][column] != INVALID_ELEVATION_VALUE)) {
+					if ((posts[lon_index][lat_index] < (short)minElevation) && 
+							(posts[lon_index][lat_index] != INVALID_ELEVATION_VALUE)) {
 						
 						// Save the minimum elevation and associated point
-						minElevation    = posts[row][column];
+						minElevation    = posts[lon_index][lat_index];
 						minElevationLat = currentLat;
 						minElevationLon = currentLon;
 						
@@ -261,11 +360,11 @@ public class ElevationExtremesFactory implements Constants {
 					
 					// Check to see if the elevation is higher than the current
 					// max elevation.
-					if ((posts[row][column] > (short)maxElevation) && 
-							(posts[row][column] != INVALID_ELEVATION_VALUE)) {
+					if ((posts[lon_index][lat_index] > (short)maxElevation) && 
+							(posts[lon_index][lat_index] != INVALID_ELEVATION_VALUE)) {
 						
 						// Save the max elevation and associated point
-						maxElevation    = posts[row][column];
+						maxElevation    = posts[lon_index][lat_index];
 						maxElevationLat = currentLat;
 						maxElevationLon = currentLon;
 						
@@ -351,8 +450,8 @@ public class ElevationExtremesFactory implements Constants {
 		DEMFrameAccuracy accuracy    = null;
 		MinMaxElevation  result      = null;
 
-		double           currentLat      = 0;
-		double           currentLon      = 0;
+		double           currentLat      = 0.0;
+		double           currentLon      = 0.0;
 		double           maxElevationLat = 0.0;
 		double           maxElevationLon = 0.0;
 		double           minElevationLat = 0.0;
@@ -391,9 +490,13 @@ public class ElevationExtremesFactory implements Constants {
 			
 			if (intersection != null) {
 				
+				// Generate a Polygon for testing whether a point falls inside 
+				// the area of interest.
+				Polygon p = getPolygon(intersection);
+				
 				// Construct an object to test for point location.
-				SimplePointInAreaLocator locator = 
-						new SimplePointInAreaLocator(getPolygon(intersection));
+				// SimplePointInAreaLocator locator = 
+				//		new SimplePointInAreaLocator(p);
 				
 				// Collect the frame accuracy data
 				accuracy = new DEMFrameAccuracy.DEMFrameAccuracyBuilder()
@@ -406,6 +509,7 @@ public class ElevationExtremesFactory implements Constants {
 				
 				// The lat/lon post spacing allows us to calculate the lat/lon 
 				// position of each elevation post.
+				// Test
 				double latPostSpacing = frame.getOMGrid().getVerticalResolution();
 				double lonPostSpacing = frame.getOMGrid().getHorizontalResolution();
 				
@@ -432,32 +536,37 @@ public class ElevationExtremesFactory implements Constants {
 					
 					// Process the posts.
 					// Loop through the 2D array.
-					for (int row=0; row < posts.length; row++) {
+					for (int lon_index=0; lon_index < posts.length; lon_index++) {
 						
-						currentLat = frameBounds.getLowerLeftLat() + 
-								(row * latPostSpacing);
+						currentLon = (float)frameBounds.getLowerLeftLon() + 
+								(lon_index * lonPostSpacing);
 						
 						// Loop through the columns
-						for (int column=0; column < posts[row].length; column++) {
+						for (int lat_index=0; lat_index < posts[lon_index].length; lat_index++) {
 							
-							currentLon = frameBounds.getLowerLeftLon() + 
-									(column * lonPostSpacing);
-							
+							currentLat = frameBounds.getLowerLeftLat() + 
+									(lat_index * latPostSpacing);
 							postCounter++;
 							
-							// If the point lies within the target bounding box, 
+							// There are multiple mechanisms for testing whether 
+							// a point falls within the area of interest.  If 
+							// the point lies within the target bounding box, 
 							// check the elevation.
-							if (locator.locate(
-									new Coordinate(currentLon, currentLat)) 
-										!= Location.EXTERIOR) {
+							if (SimplePointInAreaLocator.containsPointInPolygon(
+									new Coordinate(currentLon, currentLat), p)) {
+							// Using preconstructed SimplePointInAreaLocator object 
+							// if (locator.locate(
+							//		new Coordinate(currentLon, currentLat)) 
+							//			!= Location.EXTERIOR) {
+								
 								
 								// Check to see if the elevation is lower than the current
 								// max elevation.
-								if ((posts[row][column] < (short)minElevation) && 
-										(posts[row][column] != INVALID_ELEVATION_VALUE)) {
+								if ((posts[lon_index][lat_index] < (short)minElevation) && 
+										(posts[lon_index][lat_index] != INVALID_ELEVATION_VALUE)) {
 									
 									// Save the minimum elevation and associated point
-									minElevation    = posts[row][column];
+									minElevation    = posts[lon_index][lat_index];
 									minElevationLat = currentLat;
 									minElevationLon = currentLon;
 									
@@ -470,18 +579,18 @@ public class ElevationExtremesFactory implements Constants {
 												+ minElevationLon 
 												+ " ].");
 									}
-									
 								}
 								
 								// Check to see if the elevation is higher than the current
 								// max elevation.
-								if ((posts[row][column] > (short)maxElevation) && 
-										(posts[row][column] != INVALID_ELEVATION_VALUE)) {
+								if ((posts[lon_index][lat_index] > (short)maxElevation) && 
+										(posts[lon_index][lat_index] != INVALID_ELEVATION_VALUE)) {
 									
 									// Save the max elevation and associated point
-									maxElevation    = posts[row][column];
+									maxElevation    = posts[lon_index][lat_index];
 									maxElevationLat = currentLat;
 									maxElevationLon = currentLon;
+									
 									if (LOGGER.isDebugEnabled()) {
 										LOGGER.debug("New max elevation [ "
 												+ maxElevation 
