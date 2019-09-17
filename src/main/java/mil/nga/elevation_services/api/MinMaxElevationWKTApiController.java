@@ -34,7 +34,7 @@ public class MinMaxElevationWKTApiController implements MinMaxElevationWKTApi {
      * Manually added auto-wired reference to the elevation data service bean.
      */
 	@Autowired
-	ElevationExtremesServiceWKT minMaxService;
+	ElevationExtremesServiceWKT minMaxServiceWKT;
 	
     private final NativeWebRequest request;
 
@@ -67,7 +67,7 @@ public class MinMaxElevationWKTApiController implements MinMaxElevationWKTApi {
 			LOGGER.info("Processing MinMaxElevationWKT POST endpoint request for "
 					+ "input arguments: "
 					+ arguments);
-			response = minMaxService.getMinMaxElevation(minMaxElevationQueryWKT);
+			response = minMaxServiceWKT.getMinMaxElevationWKT(minMaxElevationQueryWKT);
 			LOGGER.info("MinMaxElevationWKT POST endpoint processed in [ "
     				+ (System.currentTimeMillis() - start)
     				+ " ] ms.");
@@ -120,7 +120,7 @@ public class MinMaxElevationWKTApiController implements MinMaxElevationWKTApi {
 			LOGGER.info("Processing MinMaxElevation GET endpoint request for "
 					+ "input arguments: "
 					+ arguments);
-			response = minMaxService.getMinMaxElevation(
+			response = minMaxServiceWKT.getMinMaxElevationWKT(
 					wkt,
 					units, 
 					source);

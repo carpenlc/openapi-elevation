@@ -13,6 +13,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+@SpringBootApplication
 @ComponentScan(basePackages = {"mil.nga.elevation.services", "mil.nga.elevation_services", "mil.nga.elevation_services.api" , "org.openapitools.configuration"})
 @EnableJpaRepositories(basePackages = "mil.nga.elevation.dao")
 @EntityScan("mil.nga.elevation.dao")
