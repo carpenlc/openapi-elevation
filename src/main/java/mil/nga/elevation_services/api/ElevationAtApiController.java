@@ -18,7 +18,7 @@ import mil.nga.elevation_services.model.ElevationResponse;
 import mil.nga.elevation_services.model.Error;
 
 import java.util.Optional;
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2019-09-10T14:44:29.236Z[Etc/GMT-0]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2019-09-17T12:49:34.296Z[Etc/GMT-0]")
 
 @Controller
 @RequestMapping("${openapi.elevationServices.base-path:/elevation/v1}")
@@ -48,6 +48,17 @@ public class ElevationAtApiController implements ElevationAtApi {
         return Optional.ofNullable(request);
     }
 
+    /**
+     * Method manually added to generated stub providing the response 
+     * associated with calls to the <code>ElevationAt<code> end point when 
+     * called with an HTTP GET.  
+     * 
+     * @param pts List of coordinates in Lon, Lat order.
+     * @param units The output units for the elevation information.
+     * @param source The terrain data file source information to use for the
+     * backing elevation data.
+     * @param operation Not used.
+     */
     @Override
     public ResponseEntity<Object> getElevationAtGET(
     		String pts,  
@@ -95,7 +106,11 @@ public class ElevationAtApiController implements ElevationAtApi {
     }
     
     /**
+     * Method manually added to generated stub providing the response 
+     * associated with calls to the <code>ElevationAt<code> end point when 
+     * called with an HTTP POST.  
      * 
+     * @param elevationQuery Deserialized query parameters.
      */
     @Override
     public ResponseEntity<Object> getElevationAtPOST(ElevationQuery elevationQuery) {

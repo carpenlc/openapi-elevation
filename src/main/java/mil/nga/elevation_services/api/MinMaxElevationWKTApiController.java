@@ -6,28 +6,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.NativeWebRequest;
 
-import io.swagger.annotations.ApiParam;
 import mil.nga.elevation.ErrorCodes;
 import mil.nga.elevation.exceptions.ApplicationException;
-import mil.nga.elevation.services.ElevationExtremesService;
 import mil.nga.elevation.services.ElevationExtremesServiceWKT;
 import mil.nga.elevation.utils.ConversionUtils;
 import mil.nga.elevation_services.model.Error;
 import mil.nga.elevation_services.model.MinMaxElevationQueryWKT;
 import mil.nga.elevation_services.model.MinMaxElevationResponse;
 
-import java.util.List;
 import java.util.Optional;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2019-09-10T14:44:29.236Z[Etc/GMT-0]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2019-09-17T12:49:34.296Z[Etc/GMT-0]")
 
 @Controller
 @RequestMapping("${openapi.elevationServices.base-path:/elevation/v1}")
@@ -57,7 +48,6 @@ public class MinMaxElevationWKTApiController implements MinMaxElevationWKTApi {
         return Optional.ofNullable(request);
     }
 
-    
     /**
      * Method manually added to generated stub providing the response 
      * associated with calls to the <code>MinMaxElevationWKT<code> end point 
@@ -66,7 +56,7 @@ public class MinMaxElevationWKTApiController implements MinMaxElevationWKTApi {
      * @param minMaxElevationQueryWKT Deserialized query parameters.
      */
     @Override
-    public ResponseEntity<Object> getElevationAtWKTPOST(
+    public ResponseEntity<Object> getMinMaxElevationWKTPOST(
     		MinMaxElevationQueryWKT minMaxElevationQueryWKT) {
     	
     	String                  arguments = ConversionUtils.toString(minMaxElevationQueryWKT);
@@ -103,8 +93,19 @@ public class MinMaxElevationWKTApiController implements MinMaxElevationWKTApi {
     	return new ResponseEntity<Object>(response, HttpStatus.OK);
     }
     
-    
-    public ResponseEntity<Object> getMinMaxElevationAtWKTGET( 
+    /**
+     * Method manually added to generated stub providing the response 
+     * associated with calls to the <code>MinMaxElevationWKT<code> end point 
+     * when called with an HTTP GET.  
+     * 
+     * @param wkt The Well-Known Text String.
+     * @param units The output units for the elevation information.
+     * @param source The terrain data file source information to use for the
+     * backing elevation data.
+     * @param operation Not used.
+     */
+    @Override
+    public ResponseEntity<Object> getMinMaxElevationWKTGET( 
     		String wkt,
     		String units,
     		String source,
@@ -147,6 +148,4 @@ public class MinMaxElevationWKTApiController implements MinMaxElevationWKTApi {
     	}
     	return new ResponseEntity<Object>(response, HttpStatus.OK);
     }
-
-
 }

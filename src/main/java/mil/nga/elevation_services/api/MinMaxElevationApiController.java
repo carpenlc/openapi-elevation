@@ -18,12 +18,12 @@ import mil.nga.elevation_services.model.MinMaxElevationQuery;
 import mil.nga.elevation_services.model.MinMaxElevationResponse;
 
 import java.util.Optional;
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2019-09-17T12:49:34.296Z[Etc/GMT-0]")
 
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2019-09-10T14:44:29.236Z[Etc/GMT-0]")
 @Controller
 @RequestMapping("${openapi.elevationServices.base-path:/elevation/v1}")
 public class MinMaxElevationApiController implements MinMaxElevationApi {
-	
+
 	/**
      * Set up the Logback system for use throughout the class.
      */
@@ -55,7 +55,8 @@ public class MinMaxElevationApiController implements MinMaxElevationApi {
      * 
      * @param minMaxElevationQuery Deserialized query parameters.
      */
-    public ResponseEntity<Object> getElevationAtPOST(
+    @Override
+    public ResponseEntity<Object> getMinMaxElevationPOST(
     		MinMaxElevationQuery minMaxElevationQuery) {
     	
     	String                  arguments = ConversionUtils.toString(minMaxElevationQuery);
@@ -92,7 +93,6 @@ public class MinMaxElevationApiController implements MinMaxElevationApi {
     	return new ResponseEntity<Object>(response, HttpStatus.OK);
     }
 
-
     /**
      * Method manually added to generated stub providing the response 
      * associated with calls to the MinMaxElevation end point when called with
@@ -106,7 +106,8 @@ public class MinMaxElevationApiController implements MinMaxElevationApi {
 	 * @param source The source DEM type.
 	 * @return A concatenated String of the input function arguments.
      */
-    public ResponseEntity<Object> getMinMaxElevationAtGET(
+    @Override
+    public ResponseEntity<Object> getMinMaxElevationGET(
     		String lllon,
     		String lllat,
     		String urlon,
@@ -115,8 +116,13 @@ public class MinMaxElevationApiController implements MinMaxElevationApi {
     		String source,
     		String operation) {
 
-    	String                  arguments = 
-    			ConversionUtils.toString(lllon, lllat, urlon, urlat, heightType, source);
+    	String                  arguments = ConversionUtils.toString(
+    											lllon, 
+    											lllat, 
+    											urlon, 
+    											urlat, 
+    											heightType, 
+    											source);
     	long                    start     = System.currentTimeMillis();
     	MinMaxElevationResponse response  = null;
     	

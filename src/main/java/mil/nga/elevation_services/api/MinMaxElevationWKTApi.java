@@ -28,7 +28,7 @@ import javax.validation.constraints.*;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2019-09-10T14:44:29.236Z[Etc/GMT-0]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2019-09-17T12:49:34.296Z[Etc/GMT-0]")
 
 @Validated
 @Api(value = "MinMaxElevationWKT", description = "the MinMaxElevationWKT API")
@@ -38,15 +38,14 @@ public interface MinMaxElevationWKTApi {
         return Optional.empty();
     }
 
-    @ApiOperation(value = "Determine the minium and maximum elevation height values within an area defined by a well known text (WKT) String.", nickname = "getElevationAtWKTPOST", notes = "", response = MinMaxElevationResponse.class, tags={  })
+    @ApiOperation(value = "Determine the minium and maximum elevation height values within an area defined by a well known text (WKT) String.", nickname = "getMinMaxElevationWKTGET", notes = "", response = MinMaxElevationResponse.class, tags={  })
     @ApiResponses(value = { 
-        @ApiResponse(code = 200, message = "The minimum and maximum elevation values.", response = MinMaxElevationResponse.class),
+        @ApiResponse(code = 200, message = "The minimum and maximum elevation values within the user-specified WKT String.", response = MinMaxElevationResponse.class),
         @ApiResponse(code = 200, message = "unexpected error", response = Error.class) })
     @RequestMapping(value = "/MinMaxElevationWKT",
         produces = { "application/json" }, 
-        consumes = { "application/json" },
-        method = RequestMethod.POST)
-    default ResponseEntity<Object> getElevationAtWKTPOST(@ApiParam(value = "A well known text" ,required=true )  @Valid @RequestBody MinMaxElevationQueryWKT minMaxElevationQueryWKT) {
+        method = RequestMethod.GET)
+    default ResponseEntity<Object> getMinMaxElevationWKTGET(@NotNull @ApiParam(value = "A well known text String.", required = true) @Valid @RequestParam(value = "wkt", required = true) String wkt,@ApiParam(value = "The output units for the elevation height data.", allowableValues = "FEET, METERS", defaultValue = "METERS") @Valid @RequestParam(value = "heightType", required = false, defaultValue="METERS") String heightType,@ApiParam(value = "The source DEM type to use for calculating the elevation height data.", allowableValues = "DTED2, DTED1, DTED0, SRTM2, SRTM1, SRTM2F, SRTM1F, BEST", defaultValue = "DTED0") @Valid @RequestParam(value = "source", required = false, defaultValue="DTED0") String source,@ApiParam(value = "This parameter is no longer used.") @Valid @RequestParam(value = "operation", required = false) String operation) {
         getRequest().ifPresent(request -> {
             for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
                 if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
@@ -60,14 +59,15 @@ public interface MinMaxElevationWKTApi {
     }
 
 
-    @ApiOperation(value = "Determine the minium and maximum elevation height values within an area defined by a well known text (WKT) String.", nickname = "getMinMaxElevationAtWKTGET", notes = "", response = MinMaxElevationResponse.class, tags={  })
+    @ApiOperation(value = "Determine the minium and maximum elevation height values within an area defined by a well known text (WKT) String.", nickname = "getMinMaxElevationWKTPOST", notes = "", response = MinMaxElevationResponse.class, tags={  })
     @ApiResponses(value = { 
-        @ApiResponse(code = 200, message = "The minimum and maximum elevation values within the user-specified WKT String.", response = MinMaxElevationResponse.class),
+        @ApiResponse(code = 200, message = "The minimum and maximum elevation values.", response = MinMaxElevationResponse.class),
         @ApiResponse(code = 200, message = "unexpected error", response = Error.class) })
     @RequestMapping(value = "/MinMaxElevationWKT",
         produces = { "application/json" }, 
-        method = RequestMethod.GET)
-    default ResponseEntity<Object> getMinMaxElevationAtWKTGET(@NotNull @Size(min=4,max=4) @ApiParam(value = "A well known text String.", required = true) @Valid @RequestParam(value = "wkt", required = true) List<String> wkt,@ApiParam(value = "The output units for the elevation height data.", allowableValues = "FEET, METERS", defaultValue = "METERS") @Valid @RequestParam(value = "heightType", required = false, defaultValue="METERS") String heightType,@ApiParam(value = "The source DEM type to use for calculating the elevation height data.", allowableValues = "DTED2, DTED1, DTED0, SRTM2, SRTM1, SRTM2F, SRTM1F, BEST", defaultValue = "DTED0") @Valid @RequestParam(value = "source", required = false, defaultValue="DTED0") String source,@ApiParam(value = "This parameter is no longer used.") @Valid @RequestParam(value = "operation", required = false) String operation) {
+        consumes = { "application/json" },
+        method = RequestMethod.POST)
+    default ResponseEntity<Object> getMinMaxElevationWKTPOST(@ApiParam(value = "A well known text" ,required=true )  @Valid @RequestBody MinMaxElevationQueryWKT minMaxElevationQueryWKT) {
         getRequest().ifPresent(request -> {
             for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
                 if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {

@@ -19,7 +19,7 @@ import mil.nga.elevation_services.model.CoveragesAvailableType;
 import mil.nga.elevation_services.model.Error;
 
 import java.util.Optional;
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2019-09-10T14:44:29.236Z[Etc/GMT-0]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2019-09-17T12:49:34.296Z[Etc/GMT-0]")
 
 @Controller
 @RequestMapping("${openapi.elevationServices.base-path:/elevation/v1}")
@@ -48,7 +48,7 @@ public class CoverageAvailableApiController implements CoverageAvailableApi {
     public Optional<NativeWebRequest> getRequest() {
         return Optional.ofNullable(request);
     }
-    
+
     /**
      * Implementation of the <code>CoveragesAvailable</code> endpoint when 
      * called with a GET request.  This method will log the request and 

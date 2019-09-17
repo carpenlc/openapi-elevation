@@ -28,7 +28,7 @@ import javax.validation.constraints.*;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2019-09-10T14:44:29.236Z[Etc/GMT-0]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2019-09-17T12:49:34.296Z[Etc/GMT-0]")
 
 @Validated
 @Api(value = "MinMaxElevation", description = "the MinMaxElevation API")
@@ -38,15 +38,14 @@ public interface MinMaxElevationApi {
         return Optional.empty();
     }
 
-    @ApiOperation(value = "Determine the minium and maximum elevation height values within a particular bounding box.", nickname = "getElevationAtPOST", notes = "", response = MinMaxElevationResponse.class, tags={  })
+    @ApiOperation(value = "Determine the minium and maximum elevation height values within a particular bounding box.", nickname = "getMinMaxElevationGET", notes = "", response = MinMaxElevationResponse.class, tags={  })
     @ApiResponses(value = { 
-        @ApiResponse(code = 200, message = "Elevation data requested.", response = MinMaxElevationResponse.class),
+        @ApiResponse(code = 200, message = "The minimum and maximum elevation values within the user-specified bounding box.", response = MinMaxElevationResponse.class),
         @ApiResponse(code = 200, message = "unexpected error", response = Error.class) })
     @RequestMapping(value = "/MinMaxElevation",
         produces = { "application/json" }, 
-        consumes = { "application/json" },
-        method = RequestMethod.POST)
-    default ResponseEntity<Object> getElevationAtPOST(@ApiParam(value = "Client specified bounding box.  The coordinates can be specified in either DMS format or decimal degrees." ,required=true )  @Valid @RequestBody MinMaxElevationQuery minMaxElevationQuery) {
+        method = RequestMethod.GET)
+    default ResponseEntity<Object> getMinMaxElevationGET(@NotNull @ApiParam(value = "The lower-left longitude coordinate of a bounding box.   The coordinates can be specified in either DMS format or decimal degrees.", required = true) @Valid @RequestParam(value = "lllon", required = true) String lllon,@NotNull @ApiParam(value = "The lower-left latitude coordinate of a bounding box.   The coordinates can be specified in either DMS format or decimal degrees.", required = true) @Valid @RequestParam(value = "lllat", required = true) String lllat,@NotNull @ApiParam(value = "The upper-right longitude coordinate of a bounding box.   The coordinates can be specified in either DMS format or decimal degrees.", required = true) @Valid @RequestParam(value = "urlon", required = true) String urlon,@NotNull @ApiParam(value = "The upper-right latitude coordinate of a bounding box.   The coordinates can be specified in either DMS format or decimal degrees.", required = true) @Valid @RequestParam(value = "urlat", required = true) String urlat,@ApiParam(value = "The output units for the elevation height data.", allowableValues = "FEET, METERS", defaultValue = "METERS") @Valid @RequestParam(value = "heightType", required = false, defaultValue="METERS") String heightType,@ApiParam(value = "The source DEM type to use for calculating the elevation height data.", allowableValues = "DTED2, DTED1, DTED0, SRTM2, SRTM1, SRTM2F, SRTM1F, BEST", defaultValue = "DTED0") @Valid @RequestParam(value = "source", required = false, defaultValue="DTED0") String source,@ApiParam(value = "This parameter is no longer used.") @Valid @RequestParam(value = "operation", required = false) String operation) {
         getRequest().ifPresent(request -> {
             for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
                 if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
@@ -60,14 +59,15 @@ public interface MinMaxElevationApi {
     }
 
 
-    @ApiOperation(value = "Determine the minium and maximum elevation height values within a particular bounding box.", nickname = "getMinMaxElevationAtGET", notes = "", response = MinMaxElevationResponse.class, tags={  })
+    @ApiOperation(value = "Determine the minium and maximum elevation height values within a particular bounding box.", nickname = "getMinMaxElevationPOST", notes = "", response = MinMaxElevationResponse.class, tags={  })
     @ApiResponses(value = { 
-        @ApiResponse(code = 200, message = "The minimum and maximum elevation values within the user-specified bounding box.", response = MinMaxElevationResponse.class),
+        @ApiResponse(code = 200, message = "Elevation data requested.", response = MinMaxElevationResponse.class),
         @ApiResponse(code = 200, message = "unexpected error", response = Error.class) })
     @RequestMapping(value = "/MinMaxElevation",
         produces = { "application/json" }, 
-        method = RequestMethod.GET)
-    default ResponseEntity<Object> getMinMaxElevationAtGET(@NotNull @ApiParam(value = "The lower-left longitude coordinate of a bounding box.   The coordinates can be specified in either DMS format or decimal degrees.", required = true) @Valid @RequestParam(value = "lllon", required = true) String lllon,@NotNull @ApiParam(value = "The lower-left latitude coordinate of a bounding box.   The coordinates can be specified in either DMS format or decimal degrees.", required = true) @Valid @RequestParam(value = "lllat", required = true) String lllat,@NotNull @ApiParam(value = "The upper-right longitude coordinate of a bounding box.   The coordinates can be specified in either DMS format or decimal degrees.", required = true) @Valid @RequestParam(value = "urlon", required = true) String urlon,@NotNull @ApiParam(value = "The upper-right latitude coordinate of a bounding box.   The coordinates can be specified in either DMS format or decimal degrees.", required = true) @Valid @RequestParam(value = "urlat", required = true) String urlat,@ApiParam(value = "The output units for the elevation height data.", allowableValues = "FEET, METERS", defaultValue = "METERS") @Valid @RequestParam(value = "heightType", required = false, defaultValue="METERS") String heightType,@ApiParam(value = "The source DEM type to use for calculating the elevation height data.", allowableValues = "DTED2, DTED1, DTED0, SRTM2, SRTM1, SRTM2F, SRTM1F, BEST", defaultValue = "DTED0") @Valid @RequestParam(value = "source", required = false, defaultValue="DTED0") String source,@ApiParam(value = "This parameter is no longer used.") @Valid @RequestParam(value = "operation", required = false) String operation) {
+        consumes = { "application/json" },
+        method = RequestMethod.POST)
+    default ResponseEntity<Object> getMinMaxElevationPOST(@ApiParam(value = "Client specified bounding box.  The coordinates can be specified in either DMS format or decimal degrees." ,required=true )  @Valid @RequestBody MinMaxElevationQuery minMaxElevationQuery) {
         getRequest().ifPresent(request -> {
             for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
                 if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
