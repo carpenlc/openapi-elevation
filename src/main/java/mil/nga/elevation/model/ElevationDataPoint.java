@@ -15,6 +15,7 @@ public class ElevationDataPoint implements Serializable, Cloneable, Constants {
 	
 	private final int                 elevation;
 	private final String              classificationMarking;
+	private final String              producerCode;
 	private final GeodeticCoordinate  coordinate;
 	private final DEMFrameAccuracy    accuracy;
     private final HeightUnitType      units;
@@ -27,6 +28,7 @@ public class ElevationDataPoint implements Serializable, Cloneable, Constants {
 	 */
 	protected ElevationDataPoint(ElevationDataPointBuilder builder) {
 		classificationMarking = builder.classificationMarking;
+		producerCode          = builder.producerCode;
 		elevation             = builder.elevation;
 		coordinate            = builder.coordinate;
 		accuracy              = builder.accuracy;
@@ -50,6 +52,15 @@ public class ElevationDataPoint implements Serializable, Cloneable, Constants {
 	 */
 	public String getClassificationMarking() {
 		return classificationMarking;
+	}
+	
+	/**
+	 * Getter method for the producer code that was associated with
+	 * the source DEM.
+	 * @return The producer code.
+	 */
+	public String getProducerCode() {
+		return producerCode;
 	}
 	
 	/**
@@ -108,6 +119,7 @@ public class ElevationDataPoint implements Serializable, Cloneable, Constants {
 	public ElevationDataPoint clone() {
 		return new ElevationDataPoint.ElevationDataPointBuilder()
 				.classificationMarking(getClassificationMarking())
+				.producerCode(getProducerCode())
 				.elevation(getElevation())
 				.source(getSource())
 				.withGeodeticCoordinate(getGeodeticCoordinate().clone())
@@ -133,7 +145,9 @@ public class ElevationDataPoint implements Serializable, Cloneable, Constants {
 		sb.append(getUnits().name());
 		sb.append(" ], classification marking => [ ");
 		sb.append(getClassificationMarking());
-		sb.append(" ] ");
+		sb.append(" ], producer code => [ ");
+		sb.append(getProducerCode());
+		sb.append(" ].");
 		sb.append(accuracy.toString());
 		return sb.toString();
 	}
@@ -148,6 +162,7 @@ public class ElevationDataPoint implements Serializable, Cloneable, Constants {
 		
 		private int                 elevation;
 		private String              classificationMarking = "";
+		private String              producerCode = DEFAULT_PRODUCER;
 		private GeodeticCoordinate  coordinate;
 		private DEMFrameAccuracy    accuracy;
 		private HeightUnitType      units  = HeightUnitType.METERS;
@@ -160,6 +175,18 @@ public class ElevationDataPoint implements Serializable, Cloneable, Constants {
 		 */
 		public ElevationDataPointBuilder classificationMarking(String value) {
 			classificationMarking = value;
+			return this;
+		}
+		
+		/**
+		 * Setter method for the source classification marking.
+		 * @param value The source classification marking.
+		 * @return Reference to the builder object.
+		 */
+		public ElevationDataPointBuilder producerCode(String value) {
+			if ((value != null) && (!value.isEmpty())) {
+				producerCode = value;
+			}
 			return this;
 		}
 		
@@ -239,6 +266,10 @@ public class ElevationDataPoint implements Serializable, Cloneable, Constants {
 			if ((classificationMarking == null) || 
 					classificationMarking.isEmpty()) {
 				classificationMarking = DEFAULT_CLASSIFICATION_MARKING;
+			}
+			if ((producerCode == null) || 
+					producerCode.isEmpty()) {
+				producerCode = DEFAULT_PRODUCER;
 			}
 			if (accuracy == null) {
 				accuracy = new DEMFrameAccuracy.DEMFrameAccuracyBuilder().build();

@@ -33,7 +33,7 @@ import mil.nga.elevation_services.model.TerrainDataFileType;
  * @author L. Craig Carpenter
  */
 @Component
-public class ElevationDataService {
+public class ElevationDataService implements Constants {
 	
     /**
      * Set up the Logback system for use throughout the class.
@@ -59,6 +59,7 @@ public class ElevationDataService {
 		
 		ElevationResponse response = new ElevationResponse();
 		String marking = "";
+		String producer = "";
 		
 		for (ElevationDataPoint point : elevations) {
 			ElevationType responseElevation = new ElevationType();
@@ -92,17 +93,31 @@ public class ElevationDataService {
 			
 			responseElevation.setSource(point.getSource());
 			response.addElevationsItem(responseElevation);
+			
+			if (!point.getProducerCode().equalsIgnoreCase(DEFAULT_PRODUCER)) {
+				producer = point.getProducerCode();
+			}
+			else {
+				if (producer.isEmpty()) {
+					producer = DEFAULT_PRODUCER;
+				}
+			}
+			
+			if ((point.getClassificationMarking() != null) && 
+					(!point.getClassificationMarking().isEmpty())) {
+				marking = point.getClassificationMarking();
+			}
+			else {
+				if (marking.isEmpty()) {
+					marking = Constants.DEFAULT_CLASSIFICATION_MARKING;
+				}
+			}
 		}
 		
 		// Set up the overall security information
 		SecurityType security = new SecurityType();
-		if ((marking == null) || (marking.isEmpty())) { 
-			security.setClassification(Constants.DEFAULT_CLASSIFICATION_MARKING);
-		}
-		else {
-			security.setClassification(marking);
-		}
-		security.setOwnerProducer(Constants.DEFAULT_PRODUCER);
+		security.setClassification(marking);
+		security.setOwnerProducer(producer);
 		response.setSecurity(security);
 		return response;
 	}

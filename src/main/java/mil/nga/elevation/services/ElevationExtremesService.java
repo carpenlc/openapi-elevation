@@ -118,7 +118,21 @@ public class ElevationExtremesService implements Constants {
 		else {
 			security.setClassification(Constants.DEFAULT_CLASSIFICATION_MARKING);
 		}
-		security.setOwnerProducer(Constants.DEFAULT_PRODUCER);
+		
+		// Code added to handle the producer code.  If the producer code 
+		// retrieved from the source DEM is not the default, ensure the 
+		// output is set to the modified value.
+		if (minMax.getMaxElevation().getProducerCode().equalsIgnoreCase(DEFAULT_PRODUCER)) {
+			if (minMax.getMinElevation().getProducerCode().equalsIgnoreCase(DEFAULT_PRODUCER)) {
+				security.setOwnerProducer(Constants.DEFAULT_PRODUCER);
+			}
+			else {
+				security.setOwnerProducer(minMax.getMinElevation().getProducerCode());
+			}
+		}
+		else {
+			security.setOwnerProducer(minMax.getMaxElevation().getProducerCode());
+		}
 		response.setSecurity(security);
 		return response;
 		
