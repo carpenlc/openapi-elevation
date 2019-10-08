@@ -145,7 +145,7 @@ public class ElevationExtremesFactory implements Constants {
     }
     
     /**
-     * 
+     * Test method.
      * @param elevation
      * @return
      */
@@ -156,6 +156,7 @@ public class ElevationExtremesFactory implements Constants {
 		long      startTime       = System.currentTimeMillis();
 		DTEDFrame       frame  = null;
 		List<ElevationDataPoint> response = new ArrayList<ElevationDataPoint>();
+		
 		try {
 			if (LOGGER.isDebugEnabled()) {
 				LOGGER.debug("Loading DEM frame file [ "
@@ -169,6 +170,16 @@ public class ElevationExtremesFactory implements Constants {
 						+ " ] loaded in [ "
 						+ (System.currentTimeMillis() - startTime)
 						+ " ] ms.");
+			}
+			
+			// Get the producer code
+			String producerCode = DEFAULT_PRODUCER;
+			if (frame.dsi != null) {
+				producerCode = frame.dsi.prod_code;
+				// Some of the producer codes are padded with spaces.
+				if (producerCode != null) {
+					producerCode = producerCode.trim();
+				}
 			}
 			
 			// Reset the time
@@ -214,14 +225,17 @@ public class ElevationExtremesFactory implements Constants {
 							(lat_index * latPostSpacing);
 					
 					if (posts[lon_index][lat_index] == elevation) {
-						ElevationDataPoint point = new ElevationDataPoint.ElevationDataPointBuilder()
-														.elevation(posts[lon_index][lat_index])
-														.withGeodeticCoordinate(
-																new GeodeticCoordinate.GeodeticCoordinateBuilder()
-																.lat(currentLat)
-																.lon(currentLon)
-																.build())
-														.build();
+						ElevationDataPoint point = 
+								new ElevationDataPoint.ElevationDataPointBuilder()
+									.elevation(posts[lon_index][lat_index])
+									.classificationMarking(getClassificationMarking())
+									.producerCode(producerCode)
+									.withGeodeticCoordinate(
+											new GeodeticCoordinate.GeodeticCoordinateBuilder()
+												.lat(currentLat)
+												.lon(currentLon)
+												.build())
+									.build();
 						response.add(point);
 						
 					}
@@ -303,6 +317,16 @@ public class ElevationExtremesFactory implements Constants {
 						.relVertAccuracy(frame.acc.rel_vert_acc)
 						.units(getUnits())
 						.build();
+			
+			// Get the producer code
+			String producerCode = DEFAULT_PRODUCER;
+			if (frame.dsi != null) {
+				producerCode = frame.dsi.prod_code;
+				// Some of the producer codes are padded with spaces.
+				if (producerCode != null) {
+					producerCode = producerCode.trim();
+				}
+			}
 			
 			// The lat/lon post spacing allows us to calculate the lat/lon 
 			// position of each elevation post.
@@ -396,6 +420,7 @@ public class ElevationExtremesFactory implements Constants {
 							new ElevationDataPoint.ElevationDataPointBuilder()
 								.elevation(maxElevation)
 								.classificationMarking(getClassificationMarking())
+								.producerCode(producerCode)
 								.units(getUnits())
 								.withDEMFrameAccuracy(accuracy)
 								.withGeodeticCoordinate(
@@ -408,6 +433,7 @@ public class ElevationExtremesFactory implements Constants {
 							new ElevationDataPoint.ElevationDataPointBuilder()
 							.elevation(minElevation)
 							.classificationMarking(getClassificationMarking())
+							.producerCode(producerCode)
 							.units(getUnits())
 							.withDEMFrameAccuracy(accuracy)
 							.withGeodeticCoordinate(
@@ -483,7 +509,17 @@ public class ElevationExtremesFactory implements Constants {
 						.upperRightLat(frame.getOMGrid().getLatitude()+1.0)
 						.upperRightLon(frame.getOMGrid().getLongitude()+1.0)
 					.build();
-            
+			
+			// Save the producer code
+			String producerCode = DEFAULT_PRODUCER;
+			if (frame.dsi != null) {
+				producerCode = frame.dsi.prod_code;
+				// Some of the producer codes are padded with spaces.
+				if (producerCode != null) {
+					producerCode = producerCode.trim();
+				}
+			}
+			
 			// Get the intersection of the DTED frame with the user-defined 
 			// bounding box.
 			BoundingBox intersection = getIntersection(frameBounds, bbox);
@@ -618,6 +654,7 @@ public class ElevationExtremesFactory implements Constants {
 									new ElevationDataPoint.ElevationDataPointBuilder()
 										.elevation(maxElevation)
 										.classificationMarking(getClassificationMarking())
+										.producerCode(producerCode)
 										.units(getUnits())
 										.source(getSourceType())
 										.withDEMFrameAccuracy(accuracy)
@@ -631,6 +668,7 @@ public class ElevationExtremesFactory implements Constants {
 									new ElevationDataPoint.ElevationDataPointBuilder()
 									.elevation(minElevation)
 									.classificationMarking(getClassificationMarking())
+									.producerCode(producerCode)
 									.units(getUnits())
 									.source(getSourceType())
 									.withDEMFrameAccuracy(accuracy)

@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 
 import com.bbn.openmap.dataAccess.dted.DTEDFrame;
 
-
 import mil.nga.elevation.model.DEMFrameAccuracy;
 import mil.nga.elevation.model.ElevationDataPoint;
 import mil.nga.elevation.model.GeodeticCoordinate;
@@ -53,10 +52,6 @@ public class ElevationDataFactory implements Constants {
 	 * This method obtains the elevation and associated accuracy data 
 	 * associated with the input geodetic coordinate.  The method uses 
 	 * the third party com.bbn.openmap API for reading the target DEM.
-	 * This method has been modified from the legacy version to return 
-	 * the interpolated elevation of the target point rather than the 
-	 * elevation of the closest southwest post.  In the vast majority 
-	 * of cases this results in a more accurate elevation measurement.
 	 * 
 	 * @param coordinate The target coordinate that we wish to find the 
 	 * elevation value for.
@@ -89,21 +84,42 @@ public class ElevationDataFactory implements Constants {
 							+ (System.currentTimeMillis() - startTime)
 							+ " ] ms.");
 				}
+				// -- test code --
+				//System.out.println(coordinate.toString());
+				//System.out.println("Elevation (SW Post): " + 
+				//		frame.elevationAt(
+				//				(float)coordinate.getLat(), 
+				//				(float)coordinate.getLon()));
+				//System.out.println("Elevation (Interpolated): " + 
+				//		frame.interpElevationAt(
+				//				(float)coordinate.getLat(), 
+				//				(float)coordinate.getLon()));
+				//System.out.println("Rel Horz Acc : " + frame.acc.rel_horz_acc);
+				// -- test code --
+					
+				// Get the producer code
+				String producerCode = DEFAULT_PRODUCER;
+				if (frame.dsi != null) {
+					producerCode = frame.dsi.prod_code;
+					// Some of the producer codes are padded with spaces.
+					if (producerCode != null) {
+						producerCode = producerCode.trim();
+					}
+				}
 				
-				System.out.println(coordinate.toString());
-				System.out.println("Elevation (SW Post): " + 
-						frame.elevationAt(
-								(float)coordinate.getLat(), 
-								(float)coordinate.getLon()));
-				System.out.println("Elevation (Interpolated): " + 
-						frame.interpElevationAt(
-								(float)coordinate.getLat(), 
-								(float)coordinate.getLon()));
-				System.out.println("Rel Horz Acc : " + frame.acc.rel_horz_acc);
+				// When comparing results to the legacy application we found 
+				// that the call to DTEDFrame.interpElevationAt() was yielding
+				// unexpected results.  A review of the openmap source code 
+				// shows that due to what appears to be a bug, the 
+				// interpolation algorithm does not do an interpolation at all
+				// but an average of two nearby points.  Code has been 
+				// changed to utilize DTEDFrame.elevationAt() until we can 
+				// get the openmap source code corrected.
 				result = new ElevationDataPoint.ElevationDataPointBuilder()
 						.units(getUnits())
 						.source(getSourceType())
 						.classificationMarking(classificationMarking)
+						.producerCode(producerCode)
 						.withGeodeticCoordinate(coordinate)
 						.withDEMFrameAccuracy(
 								new DEMFrameAccuracy.DEMFrameAccuracyBuilder()
@@ -114,7 +130,7 @@ public class ElevationDataFactory implements Constants {
 									.units(getUnits())
 									.build())
 						.elevation(
-								frame.interpElevationAt(
+								frame.elevationAt(
 										(float)coordinate.getLat(), 
 										(float)coordinate.getLon()))
 						.build();
