@@ -24,7 +24,7 @@ import java.util.Optional;
 @RequestMapping("${openapi.elevationServices.base-path:/elevation/v1}")
 public class MinMaxElevationApiController implements MinMaxElevationApi {
 
-	/**
+    /**
      * Set up the Logback system for use throughout the class.
      */
     private static final Logger LOGGER = 
@@ -33,9 +33,9 @@ public class MinMaxElevationApiController implements MinMaxElevationApi {
     /**
      * Manually added auto-wired reference to the elevation data service bean.
      */
-	@Autowired
-	ElevationExtremesService minMaxService;
-	
+    @Autowired
+    ElevationExtremesService minMaxService;
+    
     private final NativeWebRequest request;
 
     @org.springframework.beans.factory.annotation.Autowired
@@ -57,40 +57,40 @@ public class MinMaxElevationApiController implements MinMaxElevationApi {
      */
     @Override
     public ResponseEntity<Object> getMinMaxElevationPOST(
-    		MinMaxElevationQuery minMaxElevationQuery) {
-    	
-    	String                  arguments = ConversionUtils.toString(minMaxElevationQuery);
-    	long                    start     = System.currentTimeMillis();
-    	MinMaxElevationResponse response  = null;
-    	
-		try {
-			LOGGER.info("Processing MinMaxElevation POST endpoint request for "
-					+ "input arguments: "
-					+ arguments);
-			response = minMaxService.getMinMaxElevation(minMaxElevationQuery);
-			LOGGER.info("MinMaxElevation POST endpoint processed in [ "
-    				+ (System.currentTimeMillis() - start)
-    				+ " ] ms.");
-		}
-		catch (ApplicationException ae) {
-			LOGGER.error("ApplicationException encountered while processing "
-    				+ "MinMaxElevation POST endpoint.  Input arguments:  "
-					+ arguments);
-    		Error err = new Error();
-    		err.setCode(ae.getErrorCode());
-    		err.setMessage(ae.getErrorMessage());
-    		return new ResponseEntity<Object>(err, HttpStatus.BAD_REQUEST);
-		}
-    	if (response == null) {
-    		LOGGER.error("Unable to generate a valid response for "
-    				+ "MinMaxElevation POST endpoint.  Input arguments:   "
-    				+ arguments);
-    		Error err = new Error();
-    		err.setCode(ErrorCodes.INTERNAL_EXCEPTION.getErrorCode());
-    		err.setMessage(ErrorCodes.INTERNAL_EXCEPTION.getErrorMessage());
-    		return new ResponseEntity<Object>(err, HttpStatus.INTERNAL_SERVER_ERROR);
-    	}
-    	return new ResponseEntity<Object>(response, HttpStatus.OK);
+            MinMaxElevationQuery minMaxElevationQuery) {
+        
+        String                  arguments = ConversionUtils.toString(minMaxElevationQuery);
+        long                    start     = System.currentTimeMillis();
+        MinMaxElevationResponse response  = null;
+        
+        try {
+            LOGGER.info("Processing MinMaxElevation POST endpoint request for "
+                    + "input arguments: "
+                    + arguments);
+            response = minMaxService.getMinMaxElevation(minMaxElevationQuery);
+            LOGGER.info("MinMaxElevation POST endpoint processed in [ "
+                    + (System.currentTimeMillis() - start)
+                    + " ] ms.");
+        }
+        catch (ApplicationException ae) {
+            LOGGER.error("ApplicationException encountered while processing "
+                    + "MinMaxElevation POST endpoint.  Input arguments:  "
+                    + arguments);
+            Error err = new Error();
+            err.setCode(ae.getErrorCode());
+            err.setMessage(ae.getErrorMessage());
+            return new ResponseEntity<Object>(err, HttpStatus.BAD_REQUEST);
+        }
+        if (response == null) {
+            LOGGER.error("Unable to generate a valid response for "
+                    + "MinMaxElevation POST endpoint.  Input arguments:   "
+                    + arguments);
+            Error err = new Error();
+            err.setCode(ErrorCodes.INTERNAL_EXCEPTION.getErrorCode());
+            err.setMessage(ErrorCodes.INTERNAL_EXCEPTION.getErrorMessage());
+            return new ResponseEntity<Object>(err, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<Object>(response, HttpStatus.OK);
     }
 
     /**
@@ -99,66 +99,66 @@ public class MinMaxElevationApiController implements MinMaxElevationApi {
      * an HTTP GET.  
      * 
      * @param lllon The lower-left longitude value.
-	 * @param lllat The lower-left latitude value.
-	 * @param urlon The upper-right longitude value.
-	 * @param urlat The upper-right latitude value.
-	 * @param heightType The output elevation units.
-	 * @param source The source DEM type.
-	 * @return A concatenated String of the input function arguments.
+     * @param lllat The lower-left latitude value.
+     * @param urlon The upper-right longitude value.
+     * @param urlat The upper-right latitude value.
+     * @param heightType The output elevation units.
+     * @param source The source DEM type.
+     * @return A concatenated String of the input function arguments.
      */
     @Override
     public ResponseEntity<Object> getMinMaxElevationGET(
-    		String lllon,
-    		String lllat,
-    		String urlon,
-    		String urlat,
-    		String heightType,
-    		String source,
-    		String operation) {
+            String lllon,
+            String lllat,
+            String urlon,
+            String urlat,
+            String heightType,
+            String source,
+            String operation) {
 
-    	String                  arguments = ConversionUtils.toString(
-    											lllon, 
-    											lllat, 
-    											urlon, 
-    											urlat, 
-    											heightType, 
-    											source);
-    	long                    start     = System.currentTimeMillis();
-    	MinMaxElevationResponse response  = null;
-    	
-		try {
-			LOGGER.info("Processing MinMaxElevation GET endpoint request for "
-					+ "input arguments: "
-					+ arguments);
-			response = minMaxService.getMinMaxElevation(
-					lllon, 
-					lllat, 
-					urlon, 
-					urlat, 
-					heightType, 
-					source);
-			LOGGER.info("MinMaxElevation GET endpoint processed in [ "
-    				+ (System.currentTimeMillis() - start)
-    				+ " ] ms.");
-		}
-		catch (ApplicationException ae) {
-			LOGGER.error("ApplicationException encountered while processing "
-    				+ "MinMaxElevation GET endpoint.  Input arguments:  "
-					+ arguments);
-    		Error err = new Error();
-    		err.setCode(ae.getErrorCode());
-    		err.setMessage(ae.getErrorMessage());
-    		return new ResponseEntity<Object>(err, HttpStatus.BAD_REQUEST);
-		}
-    	if (response == null) {
-    		LOGGER.error("Unable to generate a valid response for "
-    				+ "MinMaxElevation GET endpoint.  Input arguments:   "
-    				+ arguments);
-    		Error err = new Error();
-    		err.setCode(ErrorCodes.INTERNAL_EXCEPTION.getErrorCode());
-    		err.setMessage(ErrorCodes.INTERNAL_EXCEPTION.getErrorMessage());
-    		return new ResponseEntity<Object>(err, HttpStatus.INTERNAL_SERVER_ERROR);
-    	}
-    	return new ResponseEntity<Object>(response, HttpStatus.OK);
+        String                  arguments = ConversionUtils.toString(
+                                                lllon, 
+                                                lllat, 
+                                                urlon, 
+                                                urlat, 
+                                                heightType, 
+                                                source);
+        long                    start     = System.currentTimeMillis();
+        MinMaxElevationResponse response  = null;
+        
+        try {
+            LOGGER.info("Processing MinMaxElevation GET endpoint request for "
+                    + "input arguments: "
+                    + arguments);
+            response = minMaxService.getMinMaxElevation(
+                    lllon, 
+                    lllat, 
+                    urlon, 
+                    urlat, 
+                    heightType, 
+                    source);
+            LOGGER.info("MinMaxElevation GET endpoint processed in [ "
+                    + (System.currentTimeMillis() - start)
+                    + " ] ms.");
+        }
+        catch (ApplicationException ae) {
+            LOGGER.error("ApplicationException encountered while processing "
+                    + "MinMaxElevation GET endpoint.  Input arguments:  "
+                    + arguments);
+            Error err = new Error();
+            err.setCode(ae.getErrorCode());
+            err.setMessage(ae.getErrorMessage());
+            return new ResponseEntity<Object>(err, HttpStatus.BAD_REQUEST);
+        }
+        if (response == null) {
+            LOGGER.error("Unable to generate a valid response for "
+                    + "MinMaxElevation GET endpoint.  Input arguments:   "
+                    + arguments);
+            Error err = new Error();
+            err.setCode(ErrorCodes.INTERNAL_EXCEPTION.getErrorCode());
+            err.setMessage(ErrorCodes.INTERNAL_EXCEPTION.getErrorMessage());
+            return new ResponseEntity<Object>(err, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<Object>(response, HttpStatus.OK);
     }
 }

@@ -33,9 +33,9 @@ public class ElevationAtApiController implements ElevationAtApi {
     /**
      * Manually added auto-wired reference to the elevation data service bean.
      */
-	@Autowired
-	ElevationDataService elevDataService;
-	
+    @Autowired
+    ElevationDataService elevDataService;
+    
     private final NativeWebRequest request;
 
     @org.springframework.beans.factory.annotation.Autowired
@@ -61,48 +61,48 @@ public class ElevationAtApiController implements ElevationAtApi {
      */
     @Override
     public ResponseEntity<Object> getElevationAtGET(
-    		String pts,  
-    		String heightType,
+            String pts,  
+            String heightType,
             String source,
             String operation) {
 
-    	String            arguments = ConversionUtils.toString(pts, heightType, source);
-    	long              start     = System.currentTimeMillis();
-    	ElevationResponse response  = null;
-    	
-    	try {
-    		LOGGER.info("Processing ElevationAt GET endpoint request for "
-    				+ "input arguments [ "
-    				+ arguments
-    				+ " ].");
-    		response = elevDataService.getElevationAt(pts, heightType, source);
-    		LOGGER.info("ElevationAt GET endpoint processed in [ "
-    				+ (System.currentTimeMillis() - start)
-    				+ " ] ms.");
-    	}
-    	catch (ApplicationException ae) {
-    		LOGGER.error("ApplicationException encountered while processing "
-    				+ "ElevationAt GET endpoint.  Input arguments [ "
-    				+ arguments
-    				+ " ].  Error message => [ "
-    				+ ae.toString()
-    				+ " ].");
-    		Error err = new Error();
-    		err.setCode(ae.getErrorCode());
-    		err.setMessage(ae.getErrorMessage());
-    		return new ResponseEntity<Object>(err, HttpStatus.BAD_REQUEST);
-    	}
-    	if (response == null) {
-    		LOGGER.error("Unable to generate a valid response for "
-    				+ "ElevationAt GET endpoint.  Input arguments [ "
-    				+ arguments
-    				+ " ].  See previous errors.");
-    		Error err = new Error();
-    		err.setCode(ErrorCodes.INTERNAL_EXCEPTION.getErrorCode());
-    		err.setMessage(ErrorCodes.INTERNAL_EXCEPTION.getErrorMessage());
-    		return new ResponseEntity<Object>(err, HttpStatus.INTERNAL_SERVER_ERROR);
-    	}
-    	return new ResponseEntity<Object>(response, HttpStatus.OK);
+        String            arguments = ConversionUtils.toString(pts, heightType, source);
+        long              start     = System.currentTimeMillis();
+        ElevationResponse response  = null;
+        
+        try {
+            LOGGER.info("Processing ElevationAt GET endpoint request for "
+                    + "input arguments [ "
+                    + arguments
+                    + " ].");
+            response = elevDataService.getElevationAt(pts, heightType, source);
+            LOGGER.info("ElevationAt GET endpoint processed in [ "
+                    + (System.currentTimeMillis() - start)
+                    + " ] ms.");
+        }
+        catch (ApplicationException ae) {
+            LOGGER.error("ApplicationException encountered while processing "
+                    + "ElevationAt GET endpoint.  Input arguments [ "
+                    + arguments
+                    + " ].  Error message => [ "
+                    + ae.toString()
+                    + " ].");
+            Error err = new Error();
+            err.setCode(ae.getErrorCode());
+            err.setMessage(ae.getErrorMessage());
+            return new ResponseEntity<Object>(err, HttpStatus.BAD_REQUEST);
+        }
+        if (response == null) {
+            LOGGER.error("Unable to generate a valid response for "
+                    + "ElevationAt GET endpoint.  Input arguments [ "
+                    + arguments
+                    + " ].  See previous errors.");
+            Error err = new Error();
+            err.setCode(ErrorCodes.INTERNAL_EXCEPTION.getErrorCode());
+            err.setMessage(ErrorCodes.INTERNAL_EXCEPTION.getErrorMessage());
+            return new ResponseEntity<Object>(err, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<Object>(response, HttpStatus.OK);
     }
     
     /**
@@ -114,43 +114,43 @@ public class ElevationAtApiController implements ElevationAtApi {
      */
     @Override
     public ResponseEntity<Object> getElevationAtPOST(ElevationQuery elevationQuery) {
-    	
-    	String            arguments = ConversionUtils.toString(elevationQuery);
-    	long              start     = System.currentTimeMillis();
-    	ElevationResponse response  = null;
-	    
-    	try {	
-    		LOGGER.info("Processing ElevationAt POST endpoint request for "
-    				+ "input arguments [ "
-    				+ arguments
-    				+ " ].");
-	    	response = elevDataService.getElevationAt(elevationQuery);
-    		LOGGER.info("ElevationAt GET endpoint processed in [ "
-    				+ (System.currentTimeMillis() - start)
-    				+ " ] ms.");
-		}
-		catch (ApplicationException ae) {
-    		LOGGER.error("ApplicationException encountered while processing "
-    				+ "ElevationAt POST endpoint.  Input arguments [ "
-    				+ arguments
-    				+ " ].  Error message => [ "
-    				+ ae.toString()
-    				+ " ].");
-			Error err = new Error();
-			err.setCode(ae.getErrorCode());
-			err.setMessage(ae.getErrorMessage());
-			return new ResponseEntity<Object>(err, HttpStatus.BAD_REQUEST);
-		}
-    	if (response == null) {
-    		LOGGER.error("Unable to generate a valid response for "
-    				+ "ElevationAt POST endpoint.  Input arguments [ "
-    				+ arguments
-    				+ " ].  See previous errors.");
-    		Error err = new Error();
-    		err.setCode(ErrorCodes.INTERNAL_EXCEPTION.getErrorCode());
-    		err.setMessage(ErrorCodes.INTERNAL_EXCEPTION.getErrorMessage());
-    		return new ResponseEntity<Object>(err, HttpStatus.INTERNAL_SERVER_ERROR);
-    	}
-    	return new ResponseEntity<Object>(response, HttpStatus.OK);
+        
+        String            arguments = ConversionUtils.toString(elevationQuery);
+        long              start     = System.currentTimeMillis();
+        ElevationResponse response  = null;
+        
+        try {    
+            LOGGER.info("Processing ElevationAt POST endpoint request for "
+                    + "input arguments [ "
+                    + arguments
+                    + " ].");
+            response = elevDataService.getElevationAt(elevationQuery);
+            LOGGER.info("ElevationAt GET endpoint processed in [ "
+                    + (System.currentTimeMillis() - start)
+                    + " ] ms.");
+        }
+        catch (ApplicationException ae) {
+            LOGGER.error("ApplicationException encountered while processing "
+                    + "ElevationAt POST endpoint.  Input arguments [ "
+                    + arguments
+                    + " ].  Error message => [ "
+                    + ae.toString()
+                    + " ].");
+            Error err = new Error();
+            err.setCode(ae.getErrorCode());
+            err.setMessage(ae.getErrorMessage());
+            return new ResponseEntity<Object>(err, HttpStatus.BAD_REQUEST);
+        }
+        if (response == null) {
+            LOGGER.error("Unable to generate a valid response for "
+                    + "ElevationAt POST endpoint.  Input arguments [ "
+                    + arguments
+                    + " ].  See previous errors.");
+            Error err = new Error();
+            err.setCode(ErrorCodes.INTERNAL_EXCEPTION.getErrorCode());
+            err.setMessage(ErrorCodes.INTERNAL_EXCEPTION.getErrorMessage());
+            return new ResponseEntity<Object>(err, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<Object>(response, HttpStatus.OK);
     }
 }

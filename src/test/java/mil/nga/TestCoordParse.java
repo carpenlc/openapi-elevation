@@ -26,13 +26,13 @@ public class TestCoordParse extends TestCoordinates {
         Assert.assertEquals(
                 ErrorMessageType.ERROR_MINUS_1025.getErrorCode(), 
                 Integer.toString((int)
-                		CoordsParse.getInstance().parseCoordString(
+                        CoordsParse.getInstance().parseCoordString(
                                 invalidLatitudes[0], 
                                 true)));
         Assert.assertEquals(
                 ErrorMessageType.ERROR_MINUS_1024.getErrorCode(), 
                 Integer.toString((int)
-                		CoordsParse.getInstance().parseCoordString(
+                        CoordsParse.getInstance().parseCoordString(
                                 invalidLatitudes[1], 
                                 true)));
         Assert.assertEquals(

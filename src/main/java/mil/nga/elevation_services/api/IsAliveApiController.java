@@ -17,12 +17,12 @@ import java.util.Optional;
 @RequestMapping("${openapi.elevationServices.base-path:/elevation/v1}")
 public class IsAliveApiController implements IsAliveApi {
 
-	/**
-	 * Temporary reference to the CellAvailabilityService
-	 */
-	@Autowired
-	CellAvailabilityService cellAvailability;
-	
+    /**
+     * Temporary reference to the CellAvailabilityService
+     */
+    @Autowired
+    CellAvailabilityService cellAvailability;
+    
     private final NativeWebRequest request;
 
     @org.springframework.beans.factory.annotation.Autowired
@@ -40,14 +40,14 @@ public class IsAliveApiController implements IsAliveApi {
      * associated with calls to the isAlive() end point.
      */
     public ResponseEntity<String> isAlive() {
-    	StringBuilder sb = new StringBuilder();
-    	sb.append("Server [ ");
-    	sb.append(FileUtils.getHostName().trim());
-    	sb.append(" ] is alive!");
-    	
-    	// Temporary call to output a list of missing DEM cells.
-    	// cellAvailability.CheckForMissingCells();
-    	
-    	return new ResponseEntity<String>(sb.toString(), HttpStatus.OK);
+        StringBuilder sb = new StringBuilder();
+        sb.append("Server [ ");
+        sb.append(FileUtils.getHostName().trim());
+        sb.append(" ] is alive!");
+        
+        // Temporary call to output a list of missing DEM cells.
+        // cellAvailability.CheckForMissingCells();
+        
+        return new ResponseEntity<String>(sb.toString(), HttpStatus.OK);
     }
 }

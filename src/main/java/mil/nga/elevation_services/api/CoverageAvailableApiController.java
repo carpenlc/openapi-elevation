@@ -34,9 +34,9 @@ public class CoverageAvailableApiController implements CoverageAvailableApi {
     /**
      * Manually added auto-wired reference to the elevation data service bean.
      */
-	@Autowired
-	CoverageService coverageService;
-	
+    @Autowired
+    CoverageService coverageService;
+    
     private final NativeWebRequest request;
 
     @org.springframework.beans.factory.annotation.Autowired
@@ -61,53 +61,53 @@ public class CoverageAvailableApiController implements CoverageAvailableApi {
      * caller.
      */
     public ResponseEntity<Object> getCoverageAvailableGET( 
-    		String lat,
-    		String lon) {
-    	
-    	long                  start    = System.currentTimeMillis();
-    	CoverageAvailableType response = null;
+            String lat,
+            String lon) {
+        
+        long                  start    = System.currentTimeMillis();
+        CoverageAvailableType response = null;
 
-		try {
-			LOGGER.info("Processing CoverageAvailable GET endpoint request for "
-					+ "input arguments:  latitude [ "
-					+ lat
-					+ " ], longitude [ "
-					+ lon
-					+ " ].");
-			response = coverageService.getCoveragesAvailable(lat, lon);
-    		LOGGER.info("CoverageAvailable GET endpoint processed in [ "
-    				+ (System.currentTimeMillis() - start)
-    				+ " ] ms.");
-		}
-		catch (ApplicationException ae) {
-			LOGGER.error("ApplicationException encountered while processing "
-    				+ "CoverageAvailable GET endpoint.  Input arguments:  "
-					+ "latitude [ "
-    				+ lat
-    				+ " ], longitude [ "
-    				+ lon
-    				+ " ].  Error message => [ "
-    				+ ae.toString()
-    				+ " ].");
-    		Error err = new Error();
-    		err.setCode(ae.getErrorCode());
-    		err.setMessage(ae.getErrorMessage());
-    		return new ResponseEntity<Object>(err, HttpStatus.BAD_REQUEST);
-		}
-    	if (response == null) {
-    		LOGGER.error("Unable to generate a valid response for "
-    				+ "CoverageAvailable GET endpoint.  Input arguments:   "
-    				+ "latitude [ "
-    				+ lat
-    				+ " ], longitude [ "
-    		        + lon 
-    				+ " ].");
-    		Error err = new Error();
-    		err.setCode(ErrorCodes.INTERNAL_EXCEPTION.getErrorCode());
-    		err.setMessage(ErrorCodes.INTERNAL_EXCEPTION.getErrorMessage());
-    		return new ResponseEntity<Object>(err, HttpStatus.INTERNAL_SERVER_ERROR);
-    	}
-    	return new ResponseEntity<Object>(response, HttpStatus.OK);
+        try {
+            LOGGER.info("Processing CoverageAvailable GET endpoint request for "
+                    + "input arguments:  latitude [ "
+                    + lat
+                    + " ], longitude [ "
+                    + lon
+                    + " ].");
+            response = coverageService.getCoveragesAvailable(lat, lon);
+            LOGGER.info("CoverageAvailable GET endpoint processed in [ "
+                    + (System.currentTimeMillis() - start)
+                    + " ] ms.");
+        }
+        catch (ApplicationException ae) {
+            LOGGER.error("ApplicationException encountered while processing "
+                    + "CoverageAvailable GET endpoint.  Input arguments:  "
+                    + "latitude [ "
+                    + lat
+                    + " ], longitude [ "
+                    + lon
+                    + " ].  Error message => [ "
+                    + ae.toString()
+                    + " ].");
+            Error err = new Error();
+            err.setCode(ae.getErrorCode());
+            err.setMessage(ae.getErrorMessage());
+            return new ResponseEntity<Object>(err, HttpStatus.BAD_REQUEST);
+        }
+        if (response == null) {
+            LOGGER.error("Unable to generate a valid response for "
+                    + "CoverageAvailable GET endpoint.  Input arguments:   "
+                    + "latitude [ "
+                    + lat
+                    + " ], longitude [ "
+                    + lon 
+                    + " ].");
+            Error err = new Error();
+            err.setCode(ErrorCodes.INTERNAL_EXCEPTION.getErrorCode());
+            err.setMessage(ErrorCodes.INTERNAL_EXCEPTION.getErrorMessage());
+            return new ResponseEntity<Object>(err, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<Object>(response, HttpStatus.OK);
     }
 
     /**
@@ -121,39 +121,39 @@ public class CoverageAvailableApiController implements CoverageAvailableApi {
      * caller.
      */
     public ResponseEntity<Object> getCoverageAvailablePOST(
-    		CoordinateTypeArray coordinateTypeArray) {
-    	
-    	long                   start     = System.currentTimeMillis();
-    	String                 arguments = ConversionUtils.toString(coordinateTypeArray);
-    	CoveragesAvailableType response  = null;
-    	
-		try {
-			LOGGER.info("Processing CoverageAvailable POST endpoint request for "
-					+ "input arguments: "
-					+ arguments);
-			response = coverageService.getCoveragesAvailable(coordinateTypeArray);
-    		LOGGER.info("CoverageAvailable POST endpoint processed in [ "
-    				+ (System.currentTimeMillis() - start)
-    				+ " ] ms.");
-		}
-		catch (ApplicationException ae) {
-			LOGGER.error("ApplicationException encountered while processing "
-    				+ "CoverageAvailable POST endpoint.  Input arguments:  "
-					+ arguments);
-    		Error err = new Error();
-    		err.setCode(ae.getErrorCode());
-    		err.setMessage(ae.getErrorMessage());
-    		return new ResponseEntity<Object>(err, HttpStatus.BAD_REQUEST);
-		}
-    	if (response == null) {
-    		LOGGER.error("Unable to generate a valid response for "
-    				+ "CoverageAvailable POST endpoint.  Input arguments:   "
-    				+ arguments);
-    		Error err = new Error();
-    		err.setCode(ErrorCodes.INTERNAL_EXCEPTION.getErrorCode());
-    		err.setMessage(ErrorCodes.INTERNAL_EXCEPTION.getErrorMessage());
-    		return new ResponseEntity<Object>(err, HttpStatus.INTERNAL_SERVER_ERROR);
-    	}
-    	return new ResponseEntity<Object>(response, HttpStatus.OK);
+            CoordinateTypeArray coordinateTypeArray) {
+        
+        long                   start     = System.currentTimeMillis();
+        String                 arguments = ConversionUtils.toString(coordinateTypeArray);
+        CoveragesAvailableType response  = null;
+        
+        try {
+            LOGGER.info("Processing CoverageAvailable POST endpoint request for "
+                    + "input arguments: "
+                    + arguments);
+            response = coverageService.getCoveragesAvailable(coordinateTypeArray);
+            LOGGER.info("CoverageAvailable POST endpoint processed in [ "
+                    + (System.currentTimeMillis() - start)
+                    + " ] ms.");
+        }
+        catch (ApplicationException ae) {
+            LOGGER.error("ApplicationException encountered while processing "
+                    + "CoverageAvailable POST endpoint.  Input arguments:  "
+                    + arguments);
+            Error err = new Error();
+            err.setCode(ae.getErrorCode());
+            err.setMessage(ae.getErrorMessage());
+            return new ResponseEntity<Object>(err, HttpStatus.BAD_REQUEST);
+        }
+        if (response == null) {
+            LOGGER.error("Unable to generate a valid response for "
+                    + "CoverageAvailable POST endpoint.  Input arguments:   "
+                    + arguments);
+            Error err = new Error();
+            err.setCode(ErrorCodes.INTERNAL_EXCEPTION.getErrorCode());
+            err.setMessage(ErrorCodes.INTERNAL_EXCEPTION.getErrorMessage());
+            return new ResponseEntity<Object>(err, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<Object>(response, HttpStatus.OK);
     }
 }

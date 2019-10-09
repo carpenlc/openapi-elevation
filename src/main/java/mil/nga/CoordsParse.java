@@ -15,9 +15,9 @@ import java.text.DecimalFormat;
  */
 public class CoordsParse {
    
-	/**
-	 * String formatter for use throughout the class.
-	 */
+    /**
+     * String formatter for use throughout the class.
+     */
     private final static DecimalFormat df3 = new DecimalFormat("###0.000");
     
     /**
@@ -25,13 +25,13 @@ public class CoordsParse {
      */
     private CoordsParse() { }
     
-	/**
-	 * Accessor method for the singleton instance of the 
-	 * <code>CoordsParse</code> object.
-	 * @return The singleton instance of <code>CoordsParse</code>.
-	 */
+    /**
+     * Accessor method for the singleton instance of the 
+     * <code>CoordsParse</code> object.
+     * @return The singleton instance of <code>CoordsParse</code>.
+     */
     public static CoordsParse getInstance() {
-    	return CoordsParseHolder.getInstance();
+        return CoordsParseHolder.getInstance();
     }
     
     /**
@@ -518,23 +518,23 @@ public class CoordsParse {
      * @author L. Craig Carpenter
      */
     public static class CoordsParseHolder {
-    	
-    	/**
-    	 * Reference to the singleton instance of <code>CoordsParse</code>
-    	 */
-    	private static CoordsParse instance = null;
-    	
-    	/**
-    	 * Accessor method for the singleton instance of the 
-    	 * <code>CoordsParse</code> object.
-    	 * @return The singleton instance of <code>CoordsParse</code>.
-    	 */
-    	public static CoordsParse getInstance() {
-    		if (instance == null) {
-    			instance = new CoordsParse();
-    		}
-    		return instance;
-    	}
+        
+        /**
+         * Reference to the singleton instance of <code>CoordsParse</code>
+         */
+        private static CoordsParse instance = null;
+        
+        /**
+         * Accessor method for the singleton instance of the 
+         * <code>CoordsParse</code> object.
+         * @return The singleton instance of <code>CoordsParse</code>.
+         */
+        public static CoordsParse getInstance() {
+            if (instance == null) {
+                instance = new CoordsParse();
+            }
+            return instance;
+        }
     }
     
     
