@@ -1,13 +1,15 @@
 package mil.nga.elevation_services.api;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.context.request.NativeWebRequest;
+import java.util.Optional;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import mil.nga.elevation.ErrorCodes;
 import mil.nga.elevation.exceptions.ApplicationException;
@@ -17,8 +19,7 @@ import mil.nga.elevation_services.model.Error;
 import mil.nga.elevation_services.model.MinMaxElevationQuery;
 import mil.nga.elevation_services.model.MinMaxElevationResponse;
 
-import java.util.Optional;
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2019-09-17T12:49:34.296Z[Etc/GMT-0]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2020-04-07T08:48:31.266-05:00[America/Chicago]")
 
 @Controller
 @RequestMapping("${openapi.elevationServices.base-path:/elevation/v1}")
@@ -38,7 +39,7 @@ public class MinMaxElevationApiController implements MinMaxElevationApi {
     
     private final NativeWebRequest request;
 
-    @org.springframework.beans.factory.annotation.Autowired
+    @Autowired
     public MinMaxElevationApiController(NativeWebRequest request) {
         this.request = request;
     }
@@ -65,8 +66,8 @@ public class MinMaxElevationApiController implements MinMaxElevationApi {
         
         try {
             LOGGER.info("Processing MinMaxElevation POST endpoint request for "
-                    + "input arguments: "
-                    + arguments);
+                    + "input arguments [ {} ].",
+                    arguments);
             response = minMaxService.getMinMaxElevation(minMaxElevationQuery);
             LOGGER.info("MinMaxElevation POST endpoint processed in [ "
                     + (System.currentTimeMillis() - start)
@@ -92,7 +93,7 @@ public class MinMaxElevationApiController implements MinMaxElevationApi {
         }
         return new ResponseEntity<Object>(response, HttpStatus.OK);
     }
-
+    
     /**
      * Method manually added to generated stub providing the response 
      * associated with calls to the MinMaxElevation end point when called with
@@ -113,6 +114,7 @@ public class MinMaxElevationApiController implements MinMaxElevationApi {
             String urlon,
             String urlat,
             String heightType,
+            String referenceEllipsoid,
             String source,
             String operation) {
 
@@ -121,11 +123,12 @@ public class MinMaxElevationApiController implements MinMaxElevationApi {
                                                 lllat, 
                                                 urlon, 
                                                 urlat, 
-                                                heightType, 
+                                                heightType,
+                                                referenceEllipsoid,
                                                 source);
         long                    start     = System.currentTimeMillis();
         MinMaxElevationResponse response  = null;
-        
+    
         try {
             LOGGER.info("Processing MinMaxElevation GET endpoint request for "
                     + "input arguments: "
@@ -135,16 +138,16 @@ public class MinMaxElevationApiController implements MinMaxElevationApi {
                     lllat, 
                     urlon, 
                     urlat, 
-                    heightType, 
+                    heightType,
+                    referenceEllipsoid,
                     source);
-            LOGGER.info("MinMaxElevation GET endpoint processed in [ "
-                    + (System.currentTimeMillis() - start)
-                    + " ] ms.");
+            LOGGER.info("MinMaxElevation GET endpoint processed in [ {} ] ms.",
+                    (System.currentTimeMillis() - start));
         }
         catch (ApplicationException ae) {
             LOGGER.error("ApplicationException encountered while processing "
-                    + "MinMaxElevation GET endpoint.  Input arguments:  "
-                    + arguments);
+                    + "MinMaxElevation GET endpoint.  Input arguments [ {} ].",
+                    arguments);
             Error err = new Error();
             err.setCode(ae.getErrorCode());
             err.setMessage(ae.getErrorMessage());
@@ -152,13 +155,14 @@ public class MinMaxElevationApiController implements MinMaxElevationApi {
         }
         if (response == null) {
             LOGGER.error("Unable to generate a valid response for "
-                    + "MinMaxElevation GET endpoint.  Input arguments:   "
-                    + arguments);
+                    + "MinMaxElevation GET endpoint.  Input arguments [ {} ].",
+                    arguments);
             Error err = new Error();
             err.setCode(ErrorCodes.INTERNAL_EXCEPTION.getErrorCode());
             err.setMessage(ErrorCodes.INTERNAL_EXCEPTION.getErrorMessage());
             return new ResponseEntity<Object>(err, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<Object>(response, HttpStatus.OK);
+    
     }
 }

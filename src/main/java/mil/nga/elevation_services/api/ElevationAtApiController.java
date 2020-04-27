@@ -1,13 +1,15 @@
 package mil.nga.elevation_services.api;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.context.request.NativeWebRequest;
+import java.util.Optional;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import mil.nga.elevation.ErrorCodes;
 import mil.nga.elevation.exceptions.ApplicationException;
@@ -17,8 +19,7 @@ import mil.nga.elevation_services.model.ElevationQuery;
 import mil.nga.elevation_services.model.ElevationResponse;
 import mil.nga.elevation_services.model.Error;
 
-import java.util.Optional;
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2019-09-17T12:49:34.296Z[Etc/GMT-0]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2020-04-07T08:48:31.266-05:00[America/Chicago]")
 
 @Controller
 @RequestMapping("${openapi.elevationServices.base-path:/elevation/v1}")
@@ -38,7 +39,7 @@ public class ElevationAtApiController implements ElevationAtApi {
     
     private final NativeWebRequest request;
 
-    @org.springframework.beans.factory.annotation.Autowired
+    @Autowired
     public ElevationAtApiController(NativeWebRequest request) {
         this.request = request;
     }
@@ -63,30 +64,31 @@ public class ElevationAtApiController implements ElevationAtApi {
     public ResponseEntity<Object> getElevationAtGET(
             String pts,  
             String heightType,
+            String referenceEllipsoid,
             String source,
             String operation) {
 
-        String            arguments = ConversionUtils.toString(pts, heightType, source);
+        String            arguments = ConversionUtils.toString(
+                pts, heightType, referenceEllipsoid, source);
         long              start     = System.currentTimeMillis();
         ElevationResponse response  = null;
         
         try {
             LOGGER.info("Processing ElevationAt GET endpoint request for "
-                    + "input arguments [ "
-                    + arguments
-                    + " ].");
-            response = elevDataService.getElevationAt(pts, heightType, source);
-            LOGGER.info("ElevationAt GET endpoint processed in [ "
-                    + (System.currentTimeMillis() - start)
-                    + " ] ms.");
+                    + "input arguments [ {} ].", arguments);
+            response = elevDataService.getElevationAt(
+                    pts, 
+                    heightType, 
+                    referenceEllipsoid, 
+                    source);
+            LOGGER.info("ElevationAt GET endpoint processed in [ {} ] ms.",
+                    (System.currentTimeMillis() - start));
         }
         catch (ApplicationException ae) {
             LOGGER.error("ApplicationException encountered while processing "
-                    + "ElevationAt GET endpoint.  Input arguments [ "
-                    + arguments
-                    + " ].  Error message => [ "
-                    + ae.toString()
-                    + " ].");
+                    + "ElevationAt GET endpoint.  Input arguments [ {} ].  "
+                    + " ].  Error message => [ {} ].", 
+                    arguments, ae.toString());
             Error err = new Error();
             err.setCode(ae.getErrorCode());
             err.setMessage(ae.getErrorMessage());
@@ -94,9 +96,8 @@ public class ElevationAtApiController implements ElevationAtApi {
         }
         if (response == null) {
             LOGGER.error("Unable to generate a valid response for "
-                    + "ElevationAt GET endpoint.  Input arguments [ "
-                    + arguments
-                    + " ].  See previous errors.");
+                    + "ElevationAt GET endpoint.  Input arguments [ {} ].",
+                    arguments);
             Error err = new Error();
             err.setCode(ErrorCodes.INTERNAL_EXCEPTION.getErrorCode());
             err.setMessage(ErrorCodes.INTERNAL_EXCEPTION.getErrorMessage());

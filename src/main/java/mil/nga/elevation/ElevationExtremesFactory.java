@@ -16,11 +16,13 @@ import org.slf4j.LoggerFactory;
 
 import com.bbn.openmap.dataAccess.dted.DTEDFrame;
 
+import mil.nga.elevation.egm96.GeoidHeightFactory;
 import mil.nga.elevation.model.BoundingBox;
 import mil.nga.elevation.model.DEMFrameAccuracy;
 import mil.nga.elevation.model.ElevationDataPoint;
 import mil.nga.elevation.model.GeodeticCoordinate;
 import mil.nga.elevation.model.MinMaxElevation;
+import mil.nga.elevation_services.model.EarthModelType;
 import mil.nga.elevation_services.model.HeightUnitType;
 import mil.nga.elevation_services.model.TerrainDataFileType;
 
@@ -42,6 +44,7 @@ public class ElevationExtremesFactory implements Constants {
     private final String              classificationMarking;
     private final HeightUnitType      units;
     private final TerrainDataFileType sourceType;
+    private final EarthModelType      earthModel;
     
     /**
      * Default constructor enforcing the builder creation pattern.
@@ -53,7 +56,40 @@ public class ElevationExtremesFactory implements Constants {
         filePath              = builder.filePath;
         sourceType            = builder.sourceType;
         units                 = builder.units;
+        earthModel            = builder.earthModel;
         classificationMarking = builder.classificationMarking;
+    }
+    
+    /**
+     * Get the elevation value in reference to the requested Earth model.  If 
+     * the Earth model is EGM96, nothing is done.  If it is WGS84 the height 
+     * is converted. 
+     * 
+     * @param lat Latitude associated with the height.
+     * @param lon Longitude associated with the height.
+     * @param value input height value.
+     * @return The requested height value.
+     */
+    protected int getElevation(double lat, double lon, short value) {
+        int result = value;
+        // If the caller requested the WGS-84 ellipsoid, handle the 
+        // offset here.
+        if (getEarthModel() != EarthModelType.EGM96) {
+            try {
+                // Get the distance between the Geoid and Ellipsoid at the 
+                // requested lat/lon.
+                double egm96Offset = GeoidHeightFactory.getInstance().getHeight(
+                        lat, 
+                        lon);
+                result = result + (int)egm96Offset;
+            }
+            catch (Exception e) {
+                LOGGER.warn("Exception raised while attempting to obtain the "
+                        + "Geoid height.  Exception message => [ {} ].", 
+                        e.getMessage());
+            }
+        }
+        return result;
     }
     
     /**
@@ -255,6 +291,8 @@ public class ElevationExtremesFactory implements Constants {
         }
         return response;
     }
+    
+    
     /**
      * This method will determine the minimum and maximum elevation points 
      * that fall within the DEM frame identified by the input file path.
@@ -361,13 +399,15 @@ public class ElevationExtremesFactory implements Constants {
                     
                     postCounter++;
                     
+                    int elevation = getElevation(currentLat, currentLon, posts[lon_index][lat_index]);
+                    
                     // Check to see if the elevation is lower than the current
                     // max elevation.
-                    if ((posts[lon_index][lat_index] < (short)minElevation) && 
-                            (posts[lon_index][lat_index] != INVALID_ELEVATION_VALUE)) {
+                    if ((elevation < (short)minElevation) && 
+                            (elevation != INVALID_ELEVATION_VALUE)) {
                         
                         // Save the minimum elevation and associated point
-                        minElevation    = posts[lon_index][lat_index];
+                        minElevation    = elevation;
                         minElevationLat = currentLat;
                         minElevationLon = currentLon;
                         
@@ -384,11 +424,11 @@ public class ElevationExtremesFactory implements Constants {
                     
                     // Check to see if the elevation is higher than the current
                     // max elevation.
-                    if ((posts[lon_index][lat_index] > (short)maxElevation) && 
-                            (posts[lon_index][lat_index] != INVALID_ELEVATION_VALUE)) {
+                    if ((elevation > (short)maxElevation) && 
+                            (elevation != INVALID_ELEVATION_VALUE)) {
                         
                         // Save the max elevation and associated point
-                        maxElevation    = posts[lon_index][lat_index];
+                        maxElevation    = elevation;
                         maxElevationLat = currentLat;
                         maxElevationLon = currentLon;
                         
@@ -422,11 +462,12 @@ public class ElevationExtremesFactory implements Constants {
                                 .classificationMarking(getClassificationMarking())
                                 .producerCode(producerCode)
                                 .units(getUnits())
+                                .earthModel(getEarthModel())
                                 .withDEMFrameAccuracy(accuracy)
                                 .withGeodeticCoordinate(
                                         new GeodeticCoordinate.GeodeticCoordinateBuilder()
-                                        .lat(maxElevationLat)
-                                        .lon(maxElevationLon)
+                                            .lat(maxElevationLat)
+                                            .lon(maxElevationLon)
                                         .build())
                                 .build())
                     .minElevation(
@@ -435,11 +476,12 @@ public class ElevationExtremesFactory implements Constants {
                             .classificationMarking(getClassificationMarking())
                             .producerCode(producerCode)
                             .units(getUnits())
+                            .earthModel(getEarthModel())
                             .withDEMFrameAccuracy(accuracy)
                             .withGeodeticCoordinate(
                                     new GeodeticCoordinate.GeodeticCoordinateBuilder()
-                                    .lat(minElevationLat)
-                                    .lon(minElevationLon)
+                                        .lat(minElevationLat)
+                                        .lon(minElevationLon)
                                     .build())
                             .build())
                     .build();
@@ -595,14 +637,14 @@ public class ElevationExtremesFactory implements Constants {
                             //        new Coordinate(currentLon, currentLat)) 
                             //            != Location.EXTERIOR) {
                                 
-                                
+                                int elevation = getElevation(currentLat, currentLon, posts[lon_index][lat_index]);
                                 // Check to see if the elevation is lower than the current
                                 // max elevation.
-                                if ((posts[lon_index][lat_index] < (short)minElevation) && 
-                                        (posts[lon_index][lat_index] != INVALID_ELEVATION_VALUE)) {
+                                if ((elevation < (short)minElevation) && 
+                                        (elevation != INVALID_ELEVATION_VALUE)) {
                                     
                                     // Save the minimum elevation and associated point
-                                    minElevation    = posts[lon_index][lat_index];
+                                    minElevation    = elevation;
                                     minElevationLat = currentLat;
                                     minElevationLon = currentLon;
                                     
@@ -619,11 +661,11 @@ public class ElevationExtremesFactory implements Constants {
                                 
                                 // Check to see if the elevation is higher than the current
                                 // max elevation.
-                                if ((posts[lon_index][lat_index] > (short)maxElevation) && 
-                                        (posts[lon_index][lat_index] != INVALID_ELEVATION_VALUE)) {
+                                if ((elevation > (short)maxElevation) && 
+                                        (elevation != INVALID_ELEVATION_VALUE)) {
                                     
                                     // Save the max elevation and associated point
-                                    maxElevation    = posts[lon_index][lat_index];
+                                    maxElevation    = elevation;
                                     maxElevationLat = currentLat;
                                     maxElevationLon = currentLon;
                                     
@@ -656,27 +698,29 @@ public class ElevationExtremesFactory implements Constants {
                                         .classificationMarking(getClassificationMarking())
                                         .producerCode(producerCode)
                                         .units(getUnits())
+                                        .earthModel(getEarthModel())
                                         .source(getSourceType())
                                         .withDEMFrameAccuracy(accuracy)
                                         .withGeodeticCoordinate(
                                                 new GeodeticCoordinate.GeodeticCoordinateBuilder()
-                                                .lat(maxElevationLat)
-                                                .lon(maxElevationLon)
+                                                    .lat(maxElevationLat)
+                                                    .lon(maxElevationLon)
                                                 .build())
                                         .build())
                             .minElevation(
                                     new ElevationDataPoint.ElevationDataPointBuilder()
-                                    .elevation(minElevation)
-                                    .classificationMarking(getClassificationMarking())
-                                    .producerCode(producerCode)
-                                    .units(getUnits())
-                                    .source(getSourceType())
-                                    .withDEMFrameAccuracy(accuracy)
-                                    .withGeodeticCoordinate(
-                                            new GeodeticCoordinate.GeodeticCoordinateBuilder()
-                                            .lat(minElevationLat)
-                                            .lon(minElevationLon)
-                                            .build())
+                                        .elevation(minElevation)
+                                        .classificationMarking(getClassificationMarking())
+                                        .producerCode(producerCode)
+                                        .units(getUnits())
+                                        .earthModel(getEarthModel())
+                                        .source(getSourceType())
+                                        .withDEMFrameAccuracy(accuracy)
+                                        .withGeodeticCoordinate(
+                                                new GeodeticCoordinate.GeodeticCoordinateBuilder()
+                                                    .lat(minElevationLat)
+                                                    .lon(minElevationLon)
+                                                .build())
                                     .build())
                             .build();
                 } // End post check
@@ -726,6 +770,15 @@ public class ElevationExtremesFactory implements Constants {
         return units;
     }
     
+    
+    /** 
+     * Getter method for the Earth model.
+     * @return The client-requested Earth model.
+     */
+    public EarthModelType getEarthModel() {
+        return earthModel;
+    }
+    
     /**
      * Static inner class implementing the builder creation pattern for 
      * objects of type <code>ElevationExtremesFactory</code>.
@@ -737,7 +790,8 @@ public class ElevationExtremesFactory implements Constants {
         private String              filePath;
         private String              classificationMarking = "";
         private TerrainDataFileType sourceType;
-        private HeightUnitType      units = HeightUnitType.METERS;
+        private HeightUnitType      units      = HeightUnitType.METERS;
+        private EarthModelType      earthModel = EarthModelType.EGM96;
         
         /**
          * Setter method for the path to the target DEM file.
@@ -764,6 +818,17 @@ public class ElevationExtremesFactory implements Constants {
          */
         public ElevationExtremesFactoryBuilder classificationMarking(String value) {
             classificationMarking = value;
+            return this;
+        }
+        
+        
+        /**
+         * Setter method for the reference Earth model.
+         * @param value The reference Earth Model.
+         * @return Reference to the builder object.
+         */
+        public ElevationExtremesFactoryBuilder earthModel(EarthModelType value) {
+            earthModel = value;
             return this;
         }
         

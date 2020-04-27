@@ -1,13 +1,16 @@
 package mil.nga.elevation_services.api;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.context.request.NativeWebRequest;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import mil.nga.elevation.ErrorCodes;
 import mil.nga.elevation.exceptions.ApplicationException;
@@ -17,8 +20,8 @@ import mil.nga.elevation_services.model.Error;
 import mil.nga.elevation_services.model.MinMaxElevationQueryWKT;
 import mil.nga.elevation_services.model.MinMaxElevationResponse;
 
-import java.util.Optional;
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2019-09-17T12:49:34.296Z[Etc/GMT-0]")
+
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2020-04-07T08:48:31.266-05:00[America/Chicago]")
 
 @Controller
 @RequestMapping("${openapi.elevationServices.base-path:/elevation/v1}")
@@ -38,7 +41,7 @@ public class MinMaxElevationWKTApiController implements MinMaxElevationWKTApi {
     
     private final NativeWebRequest request;
 
-    @org.springframework.beans.factory.annotation.Autowired
+    @Autowired
     public MinMaxElevationWKTApiController(NativeWebRequest request) {
         this.request = request;
     }
@@ -47,7 +50,7 @@ public class MinMaxElevationWKTApiController implements MinMaxElevationWKTApi {
     public Optional<NativeWebRequest> getRequest() {
         return Optional.ofNullable(request);
     }
-
+    
     /**
      * Method manually added to generated stub providing the response 
      * associated with calls to the <code>MinMaxElevationWKT<code> end point 
@@ -108,11 +111,12 @@ public class MinMaxElevationWKTApiController implements MinMaxElevationWKTApi {
     public ResponseEntity<Object> getMinMaxElevationWKTGET( 
             String wkt,
             String units,
+            String referenceEllipsoid,
             String source,
             String operation) {
         
-           String                  arguments = 
-                ConversionUtils.toString(wkt, units, source);
+        String                  arguments = 
+                ConversionUtils.toString(wkt, units, referenceEllipsoid, source);
         long                    start     = System.currentTimeMillis();
         MinMaxElevationResponse response  = null;
         
@@ -122,7 +126,8 @@ public class MinMaxElevationWKTApiController implements MinMaxElevationWKTApi {
                     + arguments);
             response = minMaxServiceWKT.getMinMaxElevationWKT(
                     wkt,
-                    units, 
+                    units,
+                    referenceEllipsoid,
                     source);
             LOGGER.info("MinMaxElevation GET endpoint processed in [ "
                     + (System.currentTimeMillis() - start)
@@ -148,4 +153,5 @@ public class MinMaxElevationWKTApiController implements MinMaxElevationWKTApi {
         }
         return new ResponseEntity<Object>(response, HttpStatus.OK);
     }
+
 }

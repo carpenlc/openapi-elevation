@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.util.ArrayList;
 import java.util.List;
+import mil.nga.elevation_services.model.EarthModelType;
 import mil.nga.elevation_services.model.ElevationType;
 import mil.nga.elevation_services.model.HeightUnitType;
 import mil.nga.elevation_services.model.SecurityType;
@@ -17,7 +18,7 @@ import javax.validation.constraints.*;
 /**
  * ElevationResponse
  */
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2019-09-17T12:49:34.296Z[Etc/GMT-0]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2020-04-07T08:48:31.266-05:00[America/Chicago]")
 
 public class ElevationResponse   {
   @JsonProperty("security")
@@ -25,6 +26,9 @@ public class ElevationResponse   {
 
   @JsonProperty("heightType")
   private HeightUnitType heightType = HeightUnitType.METERS;
+
+  @JsonProperty("earthModelType")
+  private EarthModelType earthModelType = EarthModelType.EGM96;
 
   @JsonProperty("elevations")
   @Valid
@@ -72,6 +76,27 @@ public class ElevationResponse   {
     this.heightType = heightType;
   }
 
+  public ElevationResponse earthModelType(EarthModelType earthModelType) {
+    this.earthModelType = earthModelType;
+    return this;
+  }
+
+  /**
+   * Get earthModelType
+   * @return earthModelType
+  */
+  @ApiModelProperty(value = "")
+
+  @Valid
+
+  public EarthModelType getEarthModelType() {
+    return earthModelType;
+  }
+
+  public void setEarthModelType(EarthModelType earthModelType) {
+    this.earthModelType = earthModelType;
+  }
+
   public ElevationResponse elevations(List<ElevationType> elevations) {
     this.elevations = elevations;
     return this;
@@ -113,12 +138,13 @@ public class ElevationResponse   {
     ElevationResponse elevationResponse = (ElevationResponse) o;
     return Objects.equals(this.security, elevationResponse.security) &&
         Objects.equals(this.heightType, elevationResponse.heightType) &&
+        Objects.equals(this.earthModelType, elevationResponse.earthModelType) &&
         Objects.equals(this.elevations, elevationResponse.elevations);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(security, heightType, elevations);
+    return Objects.hash(security, heightType, earthModelType, elevations);
   }
 
   @Override
@@ -128,6 +154,7 @@ public class ElevationResponse   {
     
     sb.append("    security: ").append(toIndentedString(security)).append("\n");
     sb.append("    heightType: ").append(toIndentedString(heightType)).append("\n");
+    sb.append("    earthModelType: ").append(toIndentedString(earthModelType)).append("\n");
     sb.append("    elevations: ").append(toIndentedString(elevations)).append("\n");
     sb.append("}");
     return sb.toString();

@@ -17,6 +17,7 @@ import mil.nga.elevation.model.ElevationDataPoint;
 import mil.nga.elevation.model.MinMaxElevation;
 import mil.nga.elevation.utils.ConversionUtils;
 import mil.nga.elevation_services.model.CoordinateTypeDouble;
+import mil.nga.elevation_services.model.EarthModelType;
 import mil.nga.elevation_services.model.HeightUnitType;
 import mil.nga.elevation_services.model.MinMaxElevationQuery;
 import mil.nga.elevation_services.model.MinMaxElevationResponse;
@@ -54,13 +55,16 @@ public class ElevationExtremesService implements Constants {
      * @param minMax The calculated minimum and maximum values.
      * @return An object to return to the caller.
      */
-    private MinMaxElevationResponse convertToResponse(MinMaxElevation minMax) {
+    private MinMaxElevationResponse convertToResponse(
+            MinMaxElevation minMax, 
+            EarthModelType earthModel) {
     
         CoordinateTypeDouble    minCoordinate = new CoordinateTypeDouble();
         CoordinateTypeDouble    maxCoordinate = new CoordinateTypeDouble();
         MinMaxElevationType     minElevation  = new MinMaxElevationType();
         MinMaxElevationType     maxElevation  = new MinMaxElevationType();
         MinMaxElevationResponse response      = new MinMaxElevationResponse();
+        response.setEarthModelType(earthModel);
         
         // Set the min elevation data
         minCoordinate.setLat(
@@ -220,6 +224,7 @@ public class ElevationExtremesService implements Constants {
             String urlon,
             String urlat,
             String units,
+            String referenceEllipsoid,
             String source) throws ApplicationException {
         
         // If there are any issues with the input coordinates an 
@@ -234,6 +239,7 @@ public class ElevationExtremesService implements Constants {
         return getMinMaxElevation(
                 bbox, 
                 ConversionUtils.convertHeightUnitType(units),
+                ConversionUtils.convertEarthModelType(referenceEllipsoid),
                 ConversionUtils.convertTerrainDataFileType(source));
     }
     
@@ -247,7 +253,8 @@ public class ElevationExtremesService implements Constants {
      * @throws ApplicationException Thrown for all known issues.
      */
     public MinMaxElevationResponse getMinMaxElevation(
-            MinMaxElevationQuery query) throws ApplicationException {
+            MinMaxElevationQuery query) 
+                    throws ApplicationException {
         if ((query != null) && (query.getBbox() != null)) {  
             BoundingBox bbox = new BoundingBox.BoundingBoxBuilder()
                     .lowerLeftLat(query.getBbox().getLllat())
@@ -255,7 +262,7 @@ public class ElevationExtremesService implements Constants {
                     .upperRightLat(query.getBbox().getUrlat())
                     .upperRightLon(query.getBbox().getUrlon())
                     .build();
-            return getMinMaxElevation(bbox, query.getHeightType(), query.getSource());
+            return getMinMaxElevation(bbox, query.getHeightType(), query.getEarthModelType(), query.getSource());
         }
         else {
             throw new ApplicationException.ApplicationExceptionBuilder()
@@ -281,6 +288,7 @@ public class ElevationExtremesService implements Constants {
     public MinMaxElevationResponse getMinMaxElevation(
             BoundingBox         bbox,
             HeightUnitType      units,
+            EarthModelType      earthModel,
             TerrainDataFileType source) throws ApplicationException {
         
         MinMaxElevation minMax = null;
@@ -314,6 +322,7 @@ public class ElevationExtremesService implements Constants {
                                         .classificationMarking(file.getMarking())
                                         .filePath(file.getUnixPath())
                                         .units(units)
+                                        .earthModel(earthModel)
                                         .sourceType(ConversionUtils.convertTerrainDataFileType(file.getSource()))
                                         .build();
                             MinMaxElevation tmpMinMax = factory.getMinMaxElevation(bbox);
@@ -326,11 +335,10 @@ public class ElevationExtremesService implements Constants {
                             // back to the REST interface, catch it here so 
                             // processing can continue. 
                             LOGGER.warn("Unexpected IllegalStateException "
-                                    + "raised while processing DEM data record [ "
-                                    + file.toString()
-                                    + " ].  Error message => [ "
-                                    + ise.getMessage()
-                                    + " ].");
+                                    + "raised while processing DEM data "
+                                    + "record [ {} ].  Error message => [ {} ].", 
+                                    file.toString(), 
+                                    ise.getMessage());
                         }
                     }
                 }
@@ -348,6 +356,6 @@ public class ElevationExtremesService implements Constants {
             lat += 1; // Increment the latitude counter
         }
         
-        return convertToResponse(minMax);
+        return convertToResponse(minMax, earthModel);
     }
 }

@@ -1,3 +1,6 @@
+/**
+ * UNCLASSIFIED
+ */
 package mil.nga.elevation.services;
 
 import java.util.ArrayList;
@@ -94,6 +97,7 @@ public class CoverageService {
                         CoordinateUtils.convertLon(
                                 CoordinateUtils.parseLon(lon)));
                 data = trim(data);
+                
                 if ((data != null) && (data.size() > 0)) {
                     response.setCoverages(data);
                 }

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import mil.nga.elevation_services.model.EarthModelType;
 import mil.nga.elevation_services.model.HeightUnitType;
 import mil.nga.elevation_services.model.MinMaxElevationType;
 import mil.nga.elevation_services.model.SecurityType;
@@ -15,7 +16,7 @@ import javax.validation.constraints.*;
 /**
  * MinMaxElevationResponse
  */
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2019-09-17T12:49:34.296Z[Etc/GMT-0]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2020-04-07T08:48:31.266-05:00[America/Chicago]")
 
 public class MinMaxElevationResponse   {
   @JsonProperty("security")
@@ -23,6 +24,9 @@ public class MinMaxElevationResponse   {
 
   @JsonProperty("heightType")
   private HeightUnitType heightType = HeightUnitType.METERS;
+
+  @JsonProperty("earthModelType")
+  private EarthModelType earthModelType = EarthModelType.EGM96;
 
   @JsonProperty("minElevation")
   private MinMaxElevationType minElevation;
@@ -70,6 +74,27 @@ public class MinMaxElevationResponse   {
 
   public void setHeightType(HeightUnitType heightType) {
     this.heightType = heightType;
+  }
+
+  public MinMaxElevationResponse earthModelType(EarthModelType earthModelType) {
+    this.earthModelType = earthModelType;
+    return this;
+  }
+
+  /**
+   * Get earthModelType
+   * @return earthModelType
+  */
+  @ApiModelProperty(value = "")
+
+  @Valid
+
+  public EarthModelType getEarthModelType() {
+    return earthModelType;
+  }
+
+  public void setEarthModelType(EarthModelType earthModelType) {
+    this.earthModelType = earthModelType;
   }
 
   public MinMaxElevationResponse minElevation(MinMaxElevationType minElevation) {
@@ -126,13 +151,14 @@ public class MinMaxElevationResponse   {
     MinMaxElevationResponse minMaxElevationResponse = (MinMaxElevationResponse) o;
     return Objects.equals(this.security, minMaxElevationResponse.security) &&
         Objects.equals(this.heightType, minMaxElevationResponse.heightType) &&
+        Objects.equals(this.earthModelType, minMaxElevationResponse.earthModelType) &&
         Objects.equals(this.minElevation, minMaxElevationResponse.minElevation) &&
         Objects.equals(this.maxElevation, minMaxElevationResponse.maxElevation);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(security, heightType, minElevation, maxElevation);
+    return Objects.hash(security, heightType, earthModelType, minElevation, maxElevation);
   }
 
   @Override
@@ -142,6 +168,7 @@ public class MinMaxElevationResponse   {
     
     sb.append("    security: ").append(toIndentedString(security)).append("\n");
     sb.append("    heightType: ").append(toIndentedString(heightType)).append("\n");
+    sb.append("    earthModelType: ").append(toIndentedString(earthModelType)).append("\n");
     sb.append("    minElevation: ").append(toIndentedString(minElevation)).append("\n");
     sb.append("    maxElevation: ").append(toIndentedString(maxElevation)).append("\n");
     sb.append("}");

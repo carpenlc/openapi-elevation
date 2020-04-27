@@ -1,5 +1,6 @@
 package mil.nga.elevation;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -12,8 +13,10 @@ import com.bbn.openmap.dataAccess.dted.DTEDFrame;
 import mil.nga.elevation.model.DEMFrameAccuracy;
 import mil.nga.elevation.model.ElevationDataPoint;
 import mil.nga.elevation.model.GeodeticCoordinate;
+import mil.nga.elevation_services.model.EarthModelType;
 import mil.nga.elevation_services.model.HeightUnitType;
 import mil.nga.elevation_services.model.TerrainDataFileType;
+import mil.nga.elevation.egm96.GeoidHeightFactory;
 import mil.nga.elevation.exceptions.InvalidParameterException;
 
 /**
@@ -35,6 +38,7 @@ public class ElevationDataFactory implements Constants {
     private final String              classificationMarking;
     private final TerrainDataFileType sourceType;
     private final HeightUnitType      units;
+    private final EarthModelType      earthModel;
     
     /**
      * Default constructor enforcing the builder creation pattern.
@@ -45,6 +49,7 @@ public class ElevationDataFactory implements Constants {
         filePath              = builder.filePath;
         sourceType            = builder.sourceType;
         units                 = builder.units;
+        earthModel            = builder.earthModel;
         classificationMarking = builder.classificationMarking;
     }
     
@@ -63,7 +68,7 @@ public class ElevationDataFactory implements Constants {
      * validating internal object fields.
      */
     public ElevationDataPoint getElevationAt(GeodeticCoordinate coordinate) 
-            throws InvalidParameterException, IllegalStateException {
+            throws IOException, ClassNotFoundException, InvalidParameterException, IllegalStateException {
         
         long               startTime = System.currentTimeMillis();
         DTEDFrame          frame     = null;
@@ -84,6 +89,7 @@ public class ElevationDataFactory implements Constants {
                             + (System.currentTimeMillis() - startTime)
                             + " ] ms.");
                 }
+                
                 // -- test code --
                 //System.out.println(coordinate.toString());
                 //System.out.println("Elevation (SW Post): " + 
@@ -119,8 +125,24 @@ public class ElevationDataFactory implements Constants {
                 // The openmap code was forked and corrected.  The code below 
                 // was changed to utilize interpolation for the output 
                 // elevation value.
+                int elevation = frame.biLinearInterpElevationAt(
+                        (float)coordinate.getLat(), 
+                        (float)coordinate.getLon());
+                
+                // If the caller requested the WGS-84 ellipsoid, handle the 
+                // offset here.
+                if (getEarthModel() != EarthModelType.EGM96) {
+                    // Get the distance between the Geoid and Ellipsoid at the 
+                    // requested lat/lon.
+                    double egm96Offset = GeoidHeightFactory.getInstance().getHeight(
+                            coordinate.getLat(), 
+                            coordinate.getLon());
+                    elevation = elevation + (int)egm96Offset;
+                }
+                
                 result = new ElevationDataPoint.ElevationDataPointBuilder()
                         .units(getUnits())
+                        .earthModel(getEarthModel())
                         .source(getSourceType())
                         .classificationMarking(classificationMarking)
                         .producerCode(producerCode)
@@ -133,10 +155,7 @@ public class ElevationDataFactory implements Constants {
                                     .relVertAccuracy(frame.acc.rel_vert_acc)
                                     .units(getUnits())
                                     .build())
-                        .elevation(
-                                frame.biLinearInterpElevationAt(
-                                        (float)coordinate.getLat(), 
-                                        (float)coordinate.getLon()))
+                        .elevation(elevation)
                         .build();
             }
             finally {
@@ -171,6 +190,14 @@ public class ElevationDataFactory implements Constants {
     }
     
     /** 
+     * Getter method for the Earth model type.
+     * @return The reference Earth model.
+     */
+    public EarthModelType getEarthModel() {
+        return earthModel;
+    }
+    
+    /** 
      * Getter method for the output length (height) units.
      * @return The client-requested output units.
      */
@@ -198,6 +225,7 @@ public class ElevationDataFactory implements Constants {
         private String              classificationMarking = "";
         private TerrainDataFileType sourceType;
         private HeightUnitType      units = HeightUnitType.METERS;
+        private EarthModelType      earthModel = EarthModelType.EGM96;
         
         /**
          * Setter method for the path to the target DEM file.
@@ -224,6 +252,16 @@ public class ElevationDataFactory implements Constants {
          */
         public ElevationDataFactoryBuilder classificationMarking(String value) {
             classificationMarking = value;
+            return this;
+        }
+        
+        /**
+         * Setter method for the Earth model type.
+         * @param value The Earth model type.
+         * @return Reference to the builder object.
+         */
+        public ElevationDataFactoryBuilder earthModel(EarthModelType value) {
+            earthModel = value;
             return this;
         }
         
@@ -277,23 +315,37 @@ public class ElevationDataFactory implements Constants {
     
     public static void main(String[] args) {
         try {
-            ElevationDataFactory factory = new ElevationDataFactory.ElevationDataFactoryBuilder()
-                    .filePath("/mnt/terrain/srtm/srtmf/srt2f_1/srtf280/dted/w069/s15.dt2")
+            ElevationDataFactory egm96Factory = new ElevationDataFactory.ElevationDataFactoryBuilder()
+                    .filePath("/opt/input/elevation/dted1/dted1p1/dted/w069/n66.dt1")
                     .units(HeightUnitType.METERS)
-                    .sourceType(TerrainDataFileType.SRTM2F)
+                    .earthModel(EarthModelType.EGM96)
+                    .sourceType(TerrainDataFileType.DTED1)
                     .build();
             GeodeticCoordinate coord = new GeodeticCoordinate.GeodeticCoordinateBuilder()
-                    .lat(-14.123)
+                    .lat(66.555)
                     .lon(-68.555)
                     .build();
             
-            ElevationDataPoint point = factory.getElevationAt(coord);
+            ElevationDataFactory wgs84Factory = new ElevationDataFactory.ElevationDataFactoryBuilder()
+                    .filePath("/opt/input/elevation/dted1/dted1p1/dted/w069/n66.dt1")
+                    .units(HeightUnitType.METERS)
+                    .earthModel(EarthModelType.WGS84)
+                    .sourceType(TerrainDataFileType.DTED1)
+                    .build();
+            GeodeticCoordinate coord2 = new GeodeticCoordinate.GeodeticCoordinateBuilder()
+                    .lat(66.555)
+                    .lon(-68.555)
+                    .build();
+            ElevationDataPoint point2 = wgs84Factory.getElevationAt(coord);
+            System.out.println(point2.toString());
+            
+            ElevationDataPoint point = egm96Factory.getElevationAt(coord);
             System.out.println(point.toString());
             coord = new GeodeticCoordinate.GeodeticCoordinateBuilder()
-                    .lat(-14.0)
-                    .lon(-68.0)
+                    .lat(66.0)
+                    .lon(-69.0)
                     .build();
-            point = factory.getElevationAt(coord);
+            point = egm96Factory.getElevationAt(coord);
             System.out.println(point.toString());
         }
         catch (Exception e) {

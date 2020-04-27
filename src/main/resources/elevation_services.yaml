@@ -102,6 +102,16 @@ paths:
               - FEET
               - METERS
         - in: query
+          name: referenceEllipsoid
+          description: The Earth model reference (geoid or ellipsoid) the height is associated with
+          required: false
+          schema:
+            type: string
+            default: EGM96
+            enum: 
+              - EGM96
+              - WGS84
+        - in: query
           name: source
           description: The source DEM type to use for calculating the elevation height data.
           required: false
@@ -180,6 +190,16 @@ paths:
             enum: 
               - FEET
               - METERS
+        - in: query
+          name: referenceEllipsoid
+          description: The Earth model reference (geoid or ellipsoid) the height is associated with
+          required: false
+          schema:
+            type: string
+            default: EGM96
+            enum: 
+              - EGM96
+              - WGS84
         - in: query
           name: source
           description: The source DEM type to use for calculating the elevation height data.
@@ -277,6 +297,16 @@ paths:
             enum: 
               - FEET
               - METERS
+        - in: query
+          name: referenceEllipsoid
+          description: The Earth model reference (geoid or ellipsoid) the height is associated with
+          required: false
+          schema:
+            type: string
+            default: EGM96
+            enum: 
+              - EGM96
+              - WGS84
         - in: query
           name: source
           description: The source DEM type to use for calculating the elevation height data.
@@ -405,6 +435,16 @@ components:
         Output Elevation Units:
           * FEET - Output elevation in feet.
           * METERS - Output elevation in meters (default)
+    EarthModelType: 
+      type: string
+      default: EGM96
+      enum:
+        - EGM96
+        - WGS84
+      description: > 
+        Output Earth Model Reference:
+          * EGM96 - Elevation height relative to EGM96 geoid.
+          * WGS84 - Elevation height relative to WGS84 ellipsoid.
     TerrainDataFileType:
       type: string
       default: DTED0
@@ -476,6 +516,8 @@ components:
             $ref: '#/components/schemas/CoordinateType'
         heightType:
           $ref: '#/components/schemas/HeightUnitType'
+        earthModelType:
+          $ref: '#/components/schemas/EarthModelType'
         source:
           $ref: '#/components/schemas/TerrainDataFileType'
     MinMaxElevationQuery:
@@ -485,6 +527,8 @@ components:
           $ref: '#/components/schemas/BoundingBoxType'
         heightType:
           $ref: '#/components/schemas/HeightUnitType'
+        earthModelType:
+          $ref: '#/components/schemas/EarthModelType'
         source: 
           $ref: '#/components/schemas/TerrainDataFileType'
     MinMaxElevationQueryWKT:
@@ -494,6 +538,8 @@ components:
           type: string
         heightType:
           $ref: '#/components/schemas/HeightUnitType'
+        earthModelType:
+          $ref: '#/components/schemas/EarthModelType'
         source: 
           $ref: '#/components/schemas/TerrainDataFileType'
     ElevationResponse:
@@ -503,6 +549,8 @@ components:
           $ref: '#/components/schemas/SecurityType'
         heightType:
           $ref: '#/components/schemas/HeightUnitType'
+        earthModelType:
+          $ref: '#/components/schemas/EarthModelType'
         elevations:
           type: array
           items:
@@ -514,6 +562,8 @@ components:
           $ref: '#/components/schemas/SecurityType'
         heightType:
           $ref: '#/components/schemas/HeightUnitType'
+        earthModelType:
+          $ref: '#/components/schemas/EarthModelType'
         minElevation:
           $ref: '#/components/schemas/MinMaxElevationType'
         maxElevation:

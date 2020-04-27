@@ -11,6 +11,7 @@ import mil.nga.elevation.exceptions.ApplicationException;
 import mil.nga.elevation.model.GeodeticCoordinate;
 import mil.nga.elevation_services.model.CoordinateType;
 import mil.nga.elevation_services.model.CoordinateTypeArray;
+import mil.nga.elevation_services.model.EarthModelType;
 import mil.nga.elevation_services.model.ElevationQuery;
 import mil.nga.elevation_services.model.HeightUnitType;
 import mil.nga.elevation_services.model.MinMaxElevationQuery;
@@ -50,24 +51,58 @@ public class ConversionUtils {
                 units = HeightUnitType.fromValue(value.toUpperCase().trim());
             }
             else {
-                LOGGER.warn("Elevation height units not specified.  Using [ "
-                        + HeightUnitType.METERS.toString()
-                        + " ].");
+                LOGGER.warn("Elevation height units not specified.  Using [ {} ].",
+                        HeightUnitType.METERS.toString());
             }
         }
         catch (IllegalArgumentException iae) {
             LOGGER.error("IllegalArgumentException while parsing the input "
-                    + "HeightUnitType.  User requested units of [ "
-                    + value
-                    + " ].  Exception message [ "
-                    + iae.getMessage()
-                    + " ].");
+                    + "HeightUnitType.  User requested units of [ {} ].  "
+                    + "Exception message [ {} ].", 
+                    value, 
+                    iae.getMessage());
             throw new ApplicationException.ApplicationExceptionBuilder()
                 .errorCode(ErrorCodes.INVALID_UNITS.getErrorCode())
                 .errorMessage(ErrorCodes.INVALID_UNITS.getErrorMessage())
                 .build();
         }
         return units;
+    }
+    
+    /**
+     * Convert an input String into a value of type <code>EarthModelType</code>.
+     * DTED files are in reference to the EGM96 geoid.
+     * 
+     * @param value String value to convert.
+     * @return <code>EarthModelType</code> enumeration.
+     * @throws ApplicationException Thrown if the input String cannot be 
+     * converted to a <code>EarthModelType</code> enumeration.
+     */
+    public static EarthModelType convertEarthModelType(String value) 
+            throws ApplicationException {
+        
+        EarthModelType source = EarthModelType.EGM96;
+        
+        try {
+            if ((value != null) && (!value.isEmpty())) {
+                source = EarthModelType.fromValue(value.toUpperCase().trim());
+            }
+            else {
+                LOGGER.warn("Reference Earth model not specified.  Using [ "
+                        + EarthModelType.EGM96.toString()
+                        + " ].");
+            }
+        }
+        catch (IllegalArgumentException iae) {
+            LOGGER.error("IllegalArgumentException while parsing the input "
+                    + "TerrainDataFileType.  Exception message [ {} ].", 
+                    iae.getMessage());
+            throw new ApplicationException.ApplicationExceptionBuilder()
+                .errorCode(ErrorCodes.INVALID_SOURCE_TYPE.getErrorCode())
+                .errorMessage(ErrorCodes.INVALID_SOURCE_TYPE.getErrorMessage())
+                .build();
+        }
+        return source;
     }
     
     /**
@@ -226,11 +261,16 @@ public class ConversionUtils {
     public static String toString(
             String pts,  
             String heightType,
+            String referenceEllipsoid,
             String source) {
         StringBuilder sb = new StringBuilder();
         sb.append("Units [ ");
         if (heightType != null) {
             sb.append(heightType.trim());
+        }
+        sb.append(" ], Earth Model [ ");
+        if (referenceEllipsoid != null) {
+            sb.append(referenceEllipsoid.trim());
         }
         sb.append(" ], Source DEM [ ");
         if (source != null) {
@@ -285,6 +325,7 @@ public class ConversionUtils {
      * @param urlon The upper-right longitude value.
      * @param urlat The upper-right latitude value.
      * @param heightType The output elevation units.
+     * @param earthModel The Earth model to use.
      * @param source The source DEM type.
      * @return A concatenated String of the input function arguments.
      */
@@ -294,6 +335,7 @@ public class ConversionUtils {
             String urlon, 
             String urlat, 
             String heightType,
+            String earthModel,
             String source) {
         StringBuilder sb = new StringBuilder();
         sb.append("Bounding Box [ lllat:");
@@ -306,6 +348,8 @@ public class ConversionUtils {
         sb.append(urlon);
         sb.append(" ], Units [ ");
         sb.append(heightType);
+        sb.append(" ], Earth model [ ");
+        sb.append(earthModel);
         sb.append(" ], Source [ ");
         sb.append(source);
         sb.append(" ]");

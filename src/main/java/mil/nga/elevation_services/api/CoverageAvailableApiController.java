@@ -1,13 +1,15 @@
 package mil.nga.elevation_services.api;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.context.request.NativeWebRequest;
+import java.util.Optional;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import mil.nga.elevation.ErrorCodes;
 import mil.nga.elevation.exceptions.ApplicationException;
@@ -18,8 +20,7 @@ import mil.nga.elevation_services.model.CoverageAvailableType;
 import mil.nga.elevation_services.model.CoveragesAvailableType;
 import mil.nga.elevation_services.model.Error;
 
-import java.util.Optional;
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2019-09-17T12:49:34.296Z[Etc/GMT-0]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2020-04-07T08:48:31.266-05:00[America/Chicago]")
 
 @Controller
 @RequestMapping("${openapi.elevationServices.base-path:/elevation/v1}")
@@ -39,7 +40,7 @@ public class CoverageAvailableApiController implements CoverageAvailableApi {
     
     private final NativeWebRequest request;
 
-    @org.springframework.beans.factory.annotation.Autowired
+    @Autowired
     public CoverageAvailableApiController(NativeWebRequest request) {
         this.request = request;
     }
@@ -63,7 +64,6 @@ public class CoverageAvailableApiController implements CoverageAvailableApi {
     public ResponseEntity<Object> getCoverageAvailableGET( 
             String lat,
             String lon) {
-        
         long                  start    = System.currentTimeMillis();
         CoverageAvailableType response = null;
 
@@ -94,6 +94,7 @@ public class CoverageAvailableApiController implements CoverageAvailableApi {
             err.setMessage(ae.getErrorMessage());
             return new ResponseEntity<Object>(err, HttpStatus.BAD_REQUEST);
         }
+        
         if (response == null) {
             LOGGER.error("Unable to generate a valid response for "
                     + "CoverageAvailable GET endpoint.  Input arguments:   "
@@ -109,7 +110,7 @@ public class CoverageAvailableApiController implements CoverageAvailableApi {
         }
         return new ResponseEntity<Object>(response, HttpStatus.OK);
     }
-
+    
     /**
      * Implementation of the <code>CoveragesAvailable</code> endpoint when 
      * called with a POST request.  This method will log the request and 

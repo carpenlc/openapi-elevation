@@ -13,6 +13,7 @@ import mil.nga.elevation.ErrorCodes;
 import mil.nga.elevation.exceptions.ApplicationException;
 import mil.nga.elevation.model.BoundingBox;
 import mil.nga.elevation.utils.ConversionUtils;
+import mil.nga.elevation_services.model.EarthModelType;
 import mil.nga.elevation_services.model.HeightUnitType;
 import mil.nga.elevation_services.model.MinMaxElevationQueryWKT;
 import mil.nga.elevation_services.model.MinMaxElevationResponse;
@@ -42,6 +43,9 @@ public class ElevationExtremesServiceWKT {
     @Autowired
     TerrainDataFileService repository;
     
+    /**
+     * AutoWired reference to the elevation service.
+     */
     @Autowired
     ElevationExtremesService elevationService;
     
@@ -136,6 +140,7 @@ public class ElevationExtremesServiceWKT {
             return elevationService.getMinMaxElevation(
                     getBoundingBox(query.getWkt()), 
                     query.getHeightType(), 
+                    query.getEarthModelType(),
                     query.getSource());
         }
         else {
@@ -153,7 +158,8 @@ public class ElevationExtremesServiceWKT {
      * class.
      * 
      * @param wkt The "well-known" text String.
-     * @param units The output units for the elevation values. 
+     * @param units The output units for the elevation values.
+     * @param referenceEllipsoid The reference Earth model. 
      * @param source The source DEM type.
      * @return Response object to be serialized and sent to the caller.
      * @throws ApplicationException
@@ -161,16 +167,19 @@ public class ElevationExtremesServiceWKT {
     public MinMaxElevationResponse getMinMaxElevationWKT(
             String wkt,
             String unitsStr,
+            String referenceEllipsoidStr,
             String sourceStr) throws ApplicationException {
         
         HeightUnitType      units = 
                 ConversionUtils.convertHeightUnitType(unitsStr);
         TerrainDataFileType source = 
                 ConversionUtils.convertTerrainDataFileType(sourceStr);
-        
+        EarthModelType      referenceEllipsoid = 
+                ConversionUtils.convertEarthModelType(referenceEllipsoidStr);
         return elevationService.getMinMaxElevation(
                 getBoundingBox(wkt), 
                 units, 
+                referenceEllipsoid,
                 source);
     }
     

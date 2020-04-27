@@ -10,17 +10,17 @@ import javax.validation.constraints.*;
 import com.fasterxml.jackson.annotation.JsonCreator;
 
 /**
- * Output Elevation Units:   * FEET - Output elevation in feet.   * METERS - Output elevation in meters (default) 
+ * Output Earth Model Reference:   * EGM96 - Elevation height relative to EGM96 geoid.   * WGS84 - Elevation height relative to WGS84 ellipsoid. 
  */
-public enum HeightUnitType {
+public enum EarthModelType {
   
-  FEET("FEET"),
+  EGM96("EGM96"),
   
-  METERS("METERS");
+  WGS84("WGS84");
 
   private String value;
 
-  HeightUnitType(String value) {
+  EarthModelType(String value) {
     this.value = value;
   }
 
@@ -35,8 +35,8 @@ public enum HeightUnitType {
   }
 
   @JsonCreator
-  public static HeightUnitType fromValue(String value) {
-    for (HeightUnitType b : HeightUnitType.values()) {
+  public static EarthModelType fromValue(String value) {
+    for (EarthModelType b : EarthModelType.values()) {
       if (b.value.equals(value)) {
         return b;
       }

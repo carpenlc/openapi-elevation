@@ -1,5 +1,6 @@
 package mil.nga.elevation.services;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +19,7 @@ import mil.nga.elevation.model.ElevationDataPoint;
 import mil.nga.elevation.model.GeodeticCoordinate;
 import mil.nga.elevation.utils.ConversionUtils;
 import mil.nga.elevation_services.model.CoordinateType;
+import mil.nga.elevation_services.model.EarthModelType;
 import mil.nga.elevation_services.model.ElevationQuery;
 import mil.nga.elevation_services.model.ElevationResponse;
 import mil.nga.elevation_services.model.ElevationType;
@@ -62,6 +64,7 @@ public class ElevationDataService implements Constants {
         String producer = "";
         
         for (ElevationDataPoint point : elevations) {
+            response.earthModelType(point.getEarthModel());
             ElevationType responseElevation = new ElevationType();
             responseElevation.setElevation(point.getElevation());
             CoordinateType coord = new CoordinateType();
@@ -129,6 +132,7 @@ public class ElevationDataService implements Constants {
      * 
      * @param pts A list of coordinate pairs in lon, lat order.
      * @param heightType String-based representation of the elevation units.
+     * @param referenceEllipsoid The Earth model to use for the output elevation.
      * @param source The source DEM type
      * @return The calculated elevation.
      * @throws ApplicationException Contains error code/message associated with
@@ -137,6 +141,7 @@ public class ElevationDataService implements Constants {
     public ElevationResponse getElevationAt(
             String pts,  
             String heightType,
+            String referenceEllipsoid,
             String source) throws ApplicationException {
         
         // Return object
@@ -145,6 +150,8 @@ public class ElevationDataService implements Constants {
         // Any of the below declarations can raise an ApplicationException
         HeightUnitType           units     = 
                 ConversionUtils.convertHeightUnitType(heightType);
+        EarthModelType           earthModel = 
+                ConversionUtils.convertEarthModelType(referenceEllipsoid);
         TerrainDataFileType      sourceDEM = 
                 ConversionUtils.convertTerrainDataFileType(source);
         List<GeodeticCoordinate> coords    = 
@@ -172,6 +179,7 @@ public class ElevationDataService implements Constants {
                                 new ElevationDataFactory.ElevationDataFactoryBuilder()
                                     .filePath(files.get(0).getUnixPath())
                                     .units(units)
+                                    .earthModel(earthModel)
                                     .sourceType(
                                             TerrainDataFileType.fromValue(
                                                     files.get(0).getSource().trim()))
@@ -197,9 +205,9 @@ public class ElevationDataService implements Constants {
                 // application exception.
                 LOGGER.error("Unexpected InvalidParameterException "
                         + "encountered while attempting to calculate "
-                        + "an elevation value.  Error message => [ "
-                        + ipe.getMessage()
-                        + " ].  Rethrowing as an internal exception.");
+                        + "an elevation value.  Error message => [ {} ].  "
+                        + "Rethrowing as an internal exception.", 
+                        ipe.getMessage());
                 throw new ApplicationException.ApplicationExceptionBuilder()
                     .errorCode(ErrorCodes.INTERNAL_EXCEPTION.getErrorCode())
                     .errorMessage(ErrorCodes.INTERNAL_EXCEPTION.getErrorMessage())
@@ -208,9 +216,37 @@ public class ElevationDataService implements Constants {
             catch (IllegalStateException ise) {
                 LOGGER.error("Unexpected IllegalStateException "
                         + "encountered while attempting to calculate "
-                        + "an elevation value.  Error message => [ "
-                        + ise.getMessage()
-                        + " ].  Rethrowing as an internal exception.");
+                        + "an elevation value.  Error message => [ {} ].  "
+                        + "Rethrowing as an internal exception.", 
+                        ise.getMessage());
+                throw new ApplicationException.ApplicationExceptionBuilder()
+                    .errorCode(ErrorCodes.INTERNAL_EXCEPTION.getErrorCode())
+                    .errorMessage(ErrorCodes.INTERNAL_EXCEPTION.getErrorMessage())
+                    .build();
+            }
+            catch (ClassNotFoundException cnfe) { 
+                // We should never see this exception.  Re-throw as a generic
+                // application exception.
+                LOGGER.error("Unexpected ClassNotFoundException "
+                        + "encountered while attempting to calculate "
+                        + "an elevation value.  This is an application "
+                        + "setup error.  Error message => [ {} ].  "
+                        + "Rethrowing as an internal exception.", 
+                        cnfe.getMessage());
+                throw new ApplicationException.ApplicationExceptionBuilder()
+                    .errorCode(ErrorCodes.INTERNAL_EXCEPTION.getErrorCode())
+                    .errorMessage(ErrorCodes.INTERNAL_EXCEPTION.getErrorMessage())
+                    .build();
+            }
+            catch (IOException ioe) { 
+                // We should never see this exception.  Re-throw as a generic
+                // application exception.
+                LOGGER.error("Unexpected IOException "
+                        + "encountered while attempting to calculate "
+                        + "an elevation value.  This is an application "
+                        + "setup error.  Error message => [ {} ].  "
+                        + "Rethrowing as an internal exception.", 
+                        ioe.getMessage());
                 throw new ApplicationException.ApplicationExceptionBuilder()
                     .errorCode(ErrorCodes.INTERNAL_EXCEPTION.getErrorCode())
                     .errorMessage(ErrorCodes.INTERNAL_EXCEPTION.getErrorMessage())
@@ -265,6 +301,7 @@ public class ElevationDataService implements Constants {
                                     new ElevationDataFactory.ElevationDataFactoryBuilder()
                                         .filePath(files.get(0).getUnixPath())
                                         .units(query.getHeightType())
+                                        .earthModel(query.getEarthModelType())
                                         .sourceType(
                                                 TerrainDataFileType.fromValue(
                                                         files.get(0).getSource().trim()))
@@ -281,6 +318,7 @@ public class ElevationDataService implements Constants {
                         }
                     }
                 }
+                
                 // The call to getElevationAt() can raise two different 
                 // exceptions.  Catch them here and re-raise as an 
                 // ApplicationException.
@@ -289,9 +327,9 @@ public class ElevationDataService implements Constants {
                     // application exception.
                     LOGGER.error("Unexpected InvalidParameterException "
                             + "encountered while attempting to calculate "
-                            + "an elevation value.  Error message => [ "
-                            + ipe.getMessage()
-                            + " ].  Rethrowing as an internal exception.");
+                            + "an elevation value.  Error message => [ {} ].  "
+                            + "Rethrowing as an internal exception.",
+                            ipe.getMessage());
                     throw new ApplicationException.ApplicationExceptionBuilder()
                         .errorCode(ErrorCodes.INTERNAL_EXCEPTION.getErrorCode())
                         .errorMessage(ErrorCodes.INTERNAL_EXCEPTION.getErrorMessage())
@@ -300,9 +338,37 @@ public class ElevationDataService implements Constants {
                 catch (IllegalStateException ise) {
                     LOGGER.error("Unexpected IllegalStateException "
                             + "encountered while attempting to calculate "
-                            + "an elevation value.  Error message => [ "
-                            + ise.getMessage()
-                            + " ].  Rethrowing as an internal exception.");
+                            + "an elevation value.  Error message => [ {} ].  "
+                            + "Rethrowing as an internal exception.",
+                            ise.getMessage());
+                    throw new ApplicationException.ApplicationExceptionBuilder()
+                        .errorCode(ErrorCodes.INTERNAL_EXCEPTION.getErrorCode())
+                        .errorMessage(ErrorCodes.INTERNAL_EXCEPTION.getErrorMessage())
+                        .build();
+                }
+                catch (ClassNotFoundException cnfe) { 
+                    // We should never see this exception.  Re-throw as a generic
+                    // application exception.
+                    LOGGER.error("Unexpected ClassNotFoundException "
+                            + "encountered while attempting to calculate "
+                            + "an elevation value.  This is an application "
+                            + "setup error.  Error message => [ {} ].  "
+                            + "Rethrowing as an internal exception.", 
+                            cnfe.getMessage());
+                    throw new ApplicationException.ApplicationExceptionBuilder()
+                        .errorCode(ErrorCodes.INTERNAL_EXCEPTION.getErrorCode())
+                        .errorMessage(ErrorCodes.INTERNAL_EXCEPTION.getErrorMessage())
+                        .build();
+                }
+                catch (IOException ioe) { 
+                    // We should never see this exception.  Re-throw as a generic
+                    // application exception.
+                    LOGGER.error("Unexpected IOException "
+                            + "encountered while attempting to calculate "
+                            + "an elevation value.  This is an application "
+                            + "setup error.  Error message => [ {} ].  "
+                            + "Rethrowing as an internal exception.", 
+                            ioe.getMessage());
                     throw new ApplicationException.ApplicationExceptionBuilder()
                         .errorCode(ErrorCodes.INTERNAL_EXCEPTION.getErrorCode())
                         .errorMessage(ErrorCodes.INTERNAL_EXCEPTION.getErrorMessage())

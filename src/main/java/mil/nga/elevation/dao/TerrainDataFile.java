@@ -109,6 +109,14 @@ public class TerrainDataFile implements Serializable {
     }
     
     /**
+     * Getter method for the primary key.
+     * @return The primary key.
+     */
+    public String getRowId() {
+        return rowId;
+    }
+    
+    /**
      * Getter method for the windows path to the DEM file on the 
      * file system.
      * @return Path on the file system.
@@ -171,6 +179,14 @@ public class TerrainDataFile implements Serializable {
     }
     
     /**
+     * Getter method for the primary key.
+     * @param value The primary key.
+     */
+    public void setRowId(String value) {
+        rowId = value;
+    }
+    
+    /**
      * Setter method for the windows path to the DEM file on the 
      * file system.
      * @param value Path on the file system.
@@ -210,7 +226,9 @@ public class TerrainDataFile implements Serializable {
      */
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("TerrainDataFile : source => [ ");
+        sb.append("TerrainDataFile : Primary Key => [ ");
+        sb.append(getRowId());
+        sb.append(" ], source => [ ");
         sb.append(getSource());
         sb.append(" ], lat => [ ");
         sb.append(getLat());
@@ -246,6 +264,51 @@ public class TerrainDataFile implements Serializable {
         sb.append(getQuality());
         sb.append(",");
         sb.append(getMarking());
+        return sb.toString();
+    }
+    
+    /**
+     * Convenience method to add single tick-marks to string-based 
+     * field values.
+     * @param field The field value.
+     * @return The field value wrapped in single quotes.
+     */
+    private String addTickMarks(String field) {
+        String result="''";
+        if ((field != null) && (!field.isEmpty())) {
+            result = "'"+field.trim()+"'";
+        }
+        return result;
+    }
+    
+    /**
+     * Assuming a fully populated Object, generate the associated SQL 
+     * statement that would insert the record into a target data source.
+     * Note to self...when testing we found that Derby is super picky 
+     * about the whitespace in the insert statement.
+     * @return
+     */
+    public String toInsertStatement() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("INSERT INTO TERRAIN_DATA_FILES(");
+        sb.append("ROWID, TYP, LAT, LON, WIN_PATH, UNIX_PATH, BEST, MARKING) ");
+        sb.append("VALUES (");
+        sb.append(addTickMarks(rowId));
+        sb.append(", ");
+        sb.append(addTickMarks(getSource()));
+        sb.append(", ");
+        sb.append(addTickMarks(getLat()));
+        sb.append(", ");
+        sb.append(addTickMarks(getLon()));
+        sb.append(", ");
+        sb.append(addTickMarks(getWindowsPath()));
+        sb.append(", ");
+        sb.append(addTickMarks(getUnixPath()));
+        sb.append(", ");
+        sb.append(getQuality());
+        sb.append(", ");
+        sb.append(addTickMarks(getMarking()));
+        sb.append(");");
         return sb.toString();
     }
 }

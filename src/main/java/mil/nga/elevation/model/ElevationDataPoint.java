@@ -3,6 +3,7 @@ package mil.nga.elevation.model;
 import java.io.Serializable;
 
 import mil.nga.elevation.Constants;
+import mil.nga.elevation_services.model.EarthModelType;
 import mil.nga.elevation_services.model.HeightUnitType;
 import mil.nga.elevation_services.model.TerrainDataFileType;
 
@@ -20,7 +21,8 @@ public class ElevationDataPoint implements Serializable, Cloneable, Constants {
     private final DEMFrameAccuracy    accuracy;
     private final HeightUnitType      units;
     private final TerrainDataFileType source;
-
+    private final EarthModelType      earthModel;
+    
     /**
      * Default constructor enforcing the builder creation pattern.
      * @param builder Object containing default values for the private final
@@ -33,6 +35,7 @@ public class ElevationDataPoint implements Serializable, Cloneable, Constants {
         coordinate            = builder.coordinate;
         accuracy              = builder.accuracy;
         units                 = builder.units;
+        earthModel            = builder.earthModel;
         source                = builder.source;
     }
     
@@ -114,6 +117,14 @@ public class ElevationDataPoint implements Serializable, Cloneable, Constants {
     }
     
     /**
+     * Getter method for the Earth model the height is associated with.
+     * @return The Earth model.
+     */
+    public EarthModelType getEarthModel() {
+        return earthModel;
+    }
+    
+    /**
      * Perform a deep clone of the object.
      */
     public ElevationDataPoint clone() {
@@ -125,6 +136,7 @@ public class ElevationDataPoint implements Serializable, Cloneable, Constants {
                 .withGeodeticCoordinate(getGeodeticCoordinate().clone())
                 .withDEMFrameAccuracy(getAccuracy().clone())
                 .units(getUnits())
+                .earthModel(getEarthModel())
                 .build();
     }
     
@@ -143,6 +155,8 @@ public class ElevationDataPoint implements Serializable, Cloneable, Constants {
         sb.append(getSource());
         sb.append(" ], elevation units => [ ");
         sb.append(getUnits().name());
+        sb.append(" ], earth model => [ ");
+        sb.append(getEarthModel().name());
         sb.append(" ], classification marking => [ ");
         sb.append(getClassificationMarking());
         sb.append(" ], producer code => [ ");
@@ -165,9 +179,9 @@ public class ElevationDataPoint implements Serializable, Cloneable, Constants {
         private String              producerCode = DEFAULT_PRODUCER;
         private GeodeticCoordinate  coordinate;
         private DEMFrameAccuracy    accuracy;
-        private HeightUnitType      units  = HeightUnitType.METERS;
-        private TerrainDataFileType source = TerrainDataFileType.DTED0;
-        
+        private HeightUnitType      units        = HeightUnitType.METERS;
+        private TerrainDataFileType source       = TerrainDataFileType.DTED0;
+        private EarthModelType      earthModel   = EarthModelType.EGM96;
         /**
          * Setter method for the source classification marking.
          * @param value The source classification marking.
@@ -186,6 +200,18 @@ public class ElevationDataPoint implements Serializable, Cloneable, Constants {
         public ElevationDataPointBuilder producerCode(String value) {
             if ((value != null) && (!value.isEmpty())) {
                 producerCode = value;
+            }
+            return this;
+        }
+        
+        /**
+         * Setter method for the Earth model type.
+         * @param value The Earth model type.
+         * @return The builder object.
+         */
+        public ElevationDataPointBuilder earthModel (EarthModelType value) {
+            if (value != null) {
+                earthModel = value;
             }
             return this;
         }
